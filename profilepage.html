@@ -1,0 +1,122 @@
+	<!DOCTYPE html>
+
+<html>
+	<head>
+<title>Maulik Solanki - SEN2015</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+/*    function preloadFunc () {
+				var request = $.ajax({
+                    url: "http://localhost:3000/session",
+                    type: "GET",
+                    xhrFields: {
+				        withCredentials: true
+				    }
+                });
+                request.done(function(msg) {
+                });
+
+                 request.fail(function(jqXHR, textStatus) {
+					window.location = "interview_platform.html";
+                });
+			}
+    window.onpaint = preloadFunc();
+*/</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+</head>
+	<body  </body>
+	<body>
+	<div style="background-color:#0b2f3a;position: fixed;top:0px;left:0px; width:100%;height:71px"></div>
+	<div style="background-color:#f2f2f2;position: fixed;top:70px;left:0px; width:100%;height:500px"></div>
+	<DIV style="position: fixed; top:15px; left:75px;width=100%"><font color = "#FFFFFF" ; face = "verdana" size = "6">Welcome to Interview Platform</font></DIV>
+	<DIV style="position: fixed; top:15px; left:1100px"><input type="button" id="logout" value="LOGOUT" style="font-size:0.9em;color:#ffffff;background-color :#2e64fe;width:90px;height:40px;border:0px;cursor:pointer;"/></input></DIV>
+	<DIV style="position: fixed; top:105px; left:300px"><input type="button" value="Past Events" style="font-size:0.9em;color:#ffffff;background-color :#2e64fe;width:90px;height:40px;border:0px;cursor:pointer;"/></input></DIV>
+	<DIV style="position: absolute; top:20px; left:700px;"><button type="button1" id="deleteEvent" style="background-color:#f2f2f2;color:#000000;border: 1px solid #000000;cursor:pointer;"><font face="Verdana" size = "3">Delete Event</font></button></div>
+
+	<DIV style="position: fixed; top:110px; left:1000px;width:250px"><font face="Verdana" size = "2" color="black">Events</font></div>
+		<DIV style="position: absolute; top:20px; left:900px;"><button type="button1" id="createEvent" style="background-color:#f2f2f2;color:#000000;border: 1px solid #000000;cursor:pointer;"><font face="Verdana" size = "3">Create Event</font></button></div>
+
+	 <DIV style="position: fixed; top:150px; left:900px;width: 300px"><table style="width:100%; ">
+		<tr>
+			<td>Event 1</td>
+			<td>Date and Time</td>
+			<td><input type="button" value="Register" style="font-size:0.9em;color:#ffffff;background-color :#2e64fe;width:90px;height:40px;border:1px solid;cursor:pointer;"/></input></td>
+		</tr></table></DIV>
+		
+	 <DIV style="position: fixed; top:200px; left:900px;width: 300px"><table style="width:100%">
+	 <tr>
+			<td>Event 2</td>
+			<td>Date and Time</td>
+			<td><input type="button" value="Register" style="font-size:0.9em;color:#ffffff;background-color :#2e64fe;width:90px;height:40px;border:1px solid;cursor:pointer;"/></input></td>
+			
+		</tr></table></DIV>
+	
+	 <DIV style="position: fixed; top:250px; left:900px;width: 300px"><table style="width:100%">
+	 <tr>
+			<td>Event 3</td>
+			<td>Date and Time</td>
+			<td><input type="button" value="Register" style="font-size:0.9em;color:#ffffff;background-color :#2e64fe;width:90px;height:40px;border:1px solid;cursor:pointer;"/></input></td>
+		</tr></table></DIV>
+		
+		
+		<DIV style="position: fixed; top:330px; left:950px;width:250px"><font face="Verdana" size = "2" color="black">Schedule of the User</font></div>
+	<DIV style="position: fixed; top:380px; left:900px;width: 300px"><table style="width:100%">
+	 <tr>
+			<td>Event 1</td>
+			<td>Date and Time</td>
+			<td><input type="button" value="Join" style="font-size:0.9em;color:#ffffff;background-color :#2e64fe;width:90px;height:40px;border:1px solid;cursor:pointer;"/></input></td>
+		</tr></table></DIV>
+	<DIV style="position: fixed; top:430px; left:900px;width: 300px"><table style="width:100%">
+	 <tr>
+			<td>Event 2</td>
+			<td>Date and Time</td>
+			<td><input type="button" value="Join" style="font-size:0.9em;color:#ffffff;background-color :#2e64fe;width:90px;height:40px;border:1px solid;cursor:pointer;"/></input></td>
+		</tr></table></DIV>
+	<DIV style="position: fixed; top:480px; left:900px;width: 300px"><table style="width:100%">
+	 <tr>
+			<td>Event 1</td>
+			<td>Date and Time</td>
+			<td><input type="button" value="Join" style="font-size:0.9em;color:#ffffff;background-color :#2e64fe;width:90px;height:40px;border:1px solid;cursor:pointer;"/></input></td>
+		</tr></table></DIV>
+	<script>
+		$(document).ready(function() {
+	                $("#logout").click(function() {
+					var request = $.ajax({
+	                    url: "http://localhost:3000/logout",
+	                    type: "GET",
+	                    xhrFields: {
+					        withCredentials: true
+					    }
+	                });
+	                request.done(function(msg) {
+						window.location = "interview_platform.html";
+	                });
+
+	                request.fail(function(jqXHR, textStatus, asd) {
+	                    alert("invalid id or password");
+	                    abc = jqXHR
+	                    console.log(jqXHR, textStatus, asd)
+	                });
+				});
+            });
+				$(document).ready(function() {
+	                $("#deleteEvent").click(function() {
+	                	window.location = 'delete_event.html';
+				});
+            });
+		$(document).ready(function() {
+	                $("#createEvent").click(function() {
+	                	window.location = 'Create_Event.html';
+				});
+            });
+
+		</script>
+
+	
+	
+	</body>
+	
+</html> 
