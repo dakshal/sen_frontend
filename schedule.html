@@ -2,55 +2,133 @@
 
 <head>
 	<title>Schedule interview</title>
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+  	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+  	<script>
+  	var events;
+  	function get_event() {
+        var request = $.ajax({
+            url: "http://localhost:3000/events",
+            type: "GET",
+            xhrFields: {
+                withCredentials: true
+            }
+        });
+        request.done(function(msg) {
+            events=msg;
+		  	for(var eventsName in events){
+		  		$('<option>'+events[eventsName]+'</option>').appendTo('#eventName');
+		  	}
+        });
+        request.fail(function(jqXHR, textStatus) {
+            window.location = "interview_platform.html";
+        });
+    }
+    window.onpaint = get_event();
+  	</script>
+
+  	<script>
+  	function validate(){
+  		var eventname = document.getElementById("eventName");
+  		var eventdate = document.getElementById("date");
+  		var request = $.ajax({
+            url: "http://localhost:3000/events/"+eventname.value,
+            type: "GET",
+            xhrFields: {
+                withCredentials: true
+            }
+        });
+        request.done(function(msg) {
+            if(eventdate<=msg.endingdate){
+            	submitData();
+            }
+            else{
+            	alert("re-enter the data")
+            }
+        });
+        request.fail(function(jqXHR, textStatus) {
+            window.location = "interview_platform.html";
+        });
+  	}
+  	</script>
+  	<script>
+  	function submitData(){
+  		var eventName = document.getElementById("eventName");
+  		var interviewee = document.getElementById("intervieweeName");
+  		var interviewer = document.getElementById("interviewerName");
+  		var date = document.getElementById("date");
+  		var time = document.getElementById("time");
+  		var data = {"name":eventName.value, "interviewee":interviewee.value, "interviewer":interviewer.value, "date":date.value, "time":time.value};
+  		JSON.stringify(data);
+  		var request = $.ajax({
+            url: "http://localhost:3000/events/"+eventname.value+/"interviews",
+            type: "PUT",
+            data: JSON.stringify(data);
+            xhrFields: {
+                withCredentials: true
+            }
+        });
+        if(request.create==true) {
+            
+        });
+        fail {
+            window.location = "interview_platform.html";
+        });
+  		console.log(data);
+  	}
+  	</script>
+
 </head>
 
-<body>
-	<form>
-		<h1>Schedule an interview</h1>
-
-		<table>
-			<tr>
-				<td>
-					<label>Name of event: </label>
-				</td>
-				<td>
-					<input type="text">
-				</td>
-			</tr>
-
-			<tr>
-				<td>
-					<label>Interviewer: </label>
-				</td>
-				<td>
-					<select id="interviewer" name="interviewer">
-						<option>interviewer 1</option>
-						<option>interviewer 2</option>
-					</select>
-				</td>
-			</tr>
-
-			<tr>
-				<td>
-					<label>Interviewee: </label>
-				</td>
-				<td>
-					<input type="text">
-				</td>
-			</tr>
-
-			<tr>
-				<td>
-					<label>Start time: </label>
-				</td>
-				<td>
-					<input type="time">
-				</td>
-			</tr>
-		</table>
-
-		<input type="button" value="Schedule">
-	</form>
+<body>	
+	<div style="position:fixed; top:10%; left:5%; width:50%">
+		<form class="form-horizontal">
+		  <fieldset>
+		    <legend>Schedule Event</legend>
+		    <div class="form-group">
+		      <label for="inputEmail" class="col-lg-2 control-label">Event Name:</label>
+		      <div class="col-lg-10">
+		        <select class="form-control" id="eventName">
+		        </select>
+		      </div>
+		    </div>
+		    <div class="form-group">
+		      <label for="inputEmail" class="col-lg-2 control-label">Interviewee name:</label>
+		      <div class="col-lg-10">
+		        <input type="text" class="form-control" id="intervieweeName" placeholder="Interviewee Name">
+		      </div>
+		    </div>
+		    <div class="form-group">
+		      <label for="inputEmail" class="col-lg-2 control-label">Interviewer Name:</label>
+		      <div class="col-lg-10">
+		        <input type="text" class="form-control" id="interviewerName" placeholder="Interviewer Name">
+		      </div>
+		    </div>
+		    <div class="form-group">
+		      <label for="inputEmail" class="col-lg-2 control-label">Date:</label>
+		      <div class="col-lg-10">
+		        <input type="date" class="form-control" id="date">
+		      </div>
+		    </div>
+		    <div class="form-group">
+		      <label for="inputEmail" class="col-lg-2 control-label">Start Time:</label>
+		      <div class="col-lg-10">
+		        <input type="time" class="form-control" id="time">
+		      </div>
+		    </div>
+		    <div class="form-group">
+		      <div class="col-lg-10 col-lg-offset-2">
+		        <button type="reset" class="btn btn-default">Cancel</button>
+		        <button type="button" class="btn btn-primary" onClick="validate()">Submit</button>
+		      </div>
+		    </div>
+		  </fieldset>
+		</form>
+	</div>
 </body>
 
 </html>
