@@ -123,11 +123,13 @@
                 });
             }
             function editEvent (r) {
-                var table = document.getElementById("dataTable");
-                var rowCount = table.rows.length;
-                    var i = r.parentNode.parentNode.rowIndex;
-                    
-                    window.location = "editEvents.html#flipcart";
+                var table = document.getElementById("eventTable");
+                var i = r.parentNode.parentNode.rowIndex;
+                console.log(i);
+                var data = table.rows[i].cells[1].innerHTML;
+                // console.log(data);
+
+                    window.location = "editEvents.html#"+data;
             }
         </script>
         <script>
