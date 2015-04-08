@@ -4,25 +4,6 @@
         <script src="jquery.min.js"></script>
         <link rel="stylesheet" href="bootstrap.css">
         <script type="text/javascript">
-            function preloadFunc() {
-                var request = $.ajax({
-                    url: "http://localhost:3000/session",
-                    type: "GET",
-                    xhrFields: {
-                        withCredentials: true
-                    }
-                });
-                request.done(function(msg) {
-                    Auth();
-                });
-
-                request.fail(function(jqXHR, textStatus) {
-                    window.location = "interview_platform.html";
-                });
-            }
-            window.onpaint = preloadFunc();
-        </script>
-        <script >
             function Auth() {
                 var request = $.ajax({
                     url: "http://localhost:3000/session",
@@ -30,20 +11,19 @@
                     xhrFields: {
                         withCredentials: true
                     }
-
                 });
                 request.done(function(msg) {
                     if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
                         window.location = "error.html";
                     } else if (msg['role'] == "admin") {
                     }
-                    //window.location = "profilepage.html";
                 });
 
                 request.fail(function(jqXHR, textStatus) {
-                    alert("Unable to Authenticate");
+                    window.location = "interview_platform.html";
                 });
             }
+            window.onpaint = Auth();
         </script>
         <script language="javascript">function addRow(tableID) {
                 var table = document.getElementById(tableID);
@@ -103,26 +83,28 @@
                             .map(function() {
                                 return $(this).val();
                             }).get();
-                    var data = "{";
+                    
+                    var data =[];
+
 
                     for (var i = arrCriteriaType.length - 1; i >= 0; i--) {
-                        data = data + "'" + arrCriteriaType[i] + "': { 'description' : '" + arrDescription[i] + "', 'min' : " + arrMinVal[i] + ", 'max' : '" + arrMaxVal[i] + "'}";
-                        if (i != 0) {
-                            data = data + ", ";
-                        }
+                        var tmp=[];
+                        tmp[tmp.length] = arrCriteriaType[i];
+                        tmp[tmp.length] = arrMinVal[i];
+                        tmp[tmp.length] = arrMaxVal[i];
+                        tmp[tmp.length] = arrDescription[i];
+                        data[data.length] = tmp;
                     }
-                    ;
-                    data = data + "}";
-
+                    //data = data+"]";
                     console.log(JSON.stringify(data));
-
+                    
                     var request = $.ajax({
                         url: "http://localhost:3000/events",
                         type: "PUT",
                         data: JSON.stringify({
                             'name': $('#inputEventName').val(),
                             'criteria': JSON.stringify(data),
-                            'details': {'Starting Date': $('#inputStartDate').val(), 'Ending Date': $('#inputEndingDate').val(), 'Details': $('#textarea').val()}
+                            'details': {'Starting Date': $('#inputStartDate').val(), 'Ending Date': $('#inputEndingDate').val(), 'Pointer Criteria': $('#inputEventPointerCriteria').val(), 'Details': $('#textarea').val()}
 
                         }),
                         dataType: 'json',
@@ -132,14 +114,13 @@
                         }
                     });
                     request.done(function(msg) {
-                        window.location = "profile_Admin.html";
+                        window.location = "adminProfile.html";
                     });
 
                     request.fail(function(jqXHR, textStatus) {
                         console.log(jqXHR, textStatus);
                         alert("Please enter correct info.");
                     });
-
 
                 });
             });

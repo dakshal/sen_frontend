@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>text editor</title>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    </head>
+    <body>
+        <table border="0" width="100%">
+            <col width="60%">
+            <col width="40%">
+            <tr>
+                <td align="center" >
+                    <script type="text/javascript" src="https://api.bistri.com/bistri.conference.widget.js"></script>
+                    <div class="bistri-conference"
+                         data-appid="df380091"
+                         data-appkey="65b5aab1a2cd5e5bed16ff260e3c0b53"
+                         data-room="abc"
+                         data-capacity="2"
+                         data-media-controls="true"
+                         data-chat="true">
+                    </div>
+                    <input style="width: 99%; height: 20px;" id="types" name="types">
+                    <input id="connectServer" value="Connect" type="button"></td>
+                </td>
+                <td align="center">
+                    <form name="js1">
+                        <b>Code:</b>
+        <div id="examplePadIntense";></div>
+
+
+    <script type="text/javascript">
+        // The most basic example
+//  $('#examplePadBasic').pad({'padId':'test'}); // sets the pad id and puts the pad in the div
+
+        // A slightly more intense example
+        $('#examplePadIntense').pad({'padId':'test2','showChat':'true', 'width' : 100,'height' : 500, 'userName' : 'User Name'}); // sets the pad id and puts the pad in the div
+    </script>
+                        <hr>
+                        <b>Output:</b>
+                        <textarea style="width: 99%; height: 125px;" id="output" name="output"></textarea>
+                    </form>
+                    <hr color="white">
+                    <table border="0" width="100%">
+                        <tr>
+                            <td align="center">
+                                <input id="Cview" value="Change View" type="button"></td>
+                            <td align="center">
+                                <select id="Languages" name="Languages"><option selected="selected" value="1">Text
+                                        Editor</option><option value="2">C</option><option value="3">C++</option><option value="4">Java</option><option value="5">Python</option><option value="6">Ruby</option></select>
+                            </td>
+                            <td align="center">
+                                <input id="CandR" name="CandR" value="Compile and Run"  type="button"/></td>
+                        </tr>
+                        <script>
+            $(document).ready(function() {
+                $("#CandR").click(function() {
+                        $.ajax({
+                            url: "http://127.0.0.1:9001/api/1/getText?apikey=75fe56ddb9510ceea2fb24b4555bb55c4568878e849802f198f765429f566596&padID=IP&jsonp=test",
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data,status) { alert('page content: ' + data.data); },
+                            error: function(){alert("failed");}
+                        });
+                    });
+                });
+                       </script>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div id="result">
+        </div>
+    </body>
+</html>
