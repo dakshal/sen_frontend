@@ -1,65 +1,102 @@
+
 <html>
 
     <head>
         <title>text editor</title>
-        <script src="jquery.min.js"></script>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <script src="jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
 
-        <script>
-        function getData(){
-            var url = document.URL;
-            var hash = url.substring(url.indexOf('#')+1);
-            getEventData(hash);
-            console.log(hash)
-            return hash;
-        }
-        </script>
-
-        <script>
-        function sendRequest(endData){
+            <script>
+            function getID(sessionId){
+                console.log(sessionId);
+                var emailIdtemp = "http://localhost:3000/users/"+encodeURIComponent(sessionId)+"/interviews";
+                console.log(emailIdtemp);
             var request = $.ajax({
-                url: "http://klsjdfkjhsdkjhfks",
-                type: "POST",
-                data: endData
+                    url: emailIdtemp,
+                    type: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    processData: false,
+                    dataType: "json",
+                    async: false,
+                    statusCode: {
+                        404: function() {
+                          alert("page not found");
+                        }
+                      },
+                    xhrFields: {
+                        withCredintials: true
+                    },
+                    success: function(msg) {
+                var currentTime = getCurrentTime();
+                    //for(var i=0;i<msg.length;i++){
+                        //if(msg[i].time<currentTime){
+                            // var eventId = msg[0].id;
+                            // var eventName = msg[0].event;
+                            console.log(msg);
+                            // console.log(eventName);
+                            // sendRequest(eventId, eventName);
+                        //}
+                    //}
+                }
             });
-            request.done(function(msg) {
-                console.log("Interview ended");
-            });
-            request.fail(function(jqXHR, textStatus) {
-                console.log("Interview still open");
-            });
-        }
-        </script>
+
+                request.fail(function(jqXHR, textStatus) {
+                    alert("session failed");
+
+                });
+            }
+            </script>
+
 
         <script>
-        function endInterview(){
+        function interviewEnd () {
+            console.log("hi");
+                var sessionId = '';
             var request = $.ajax({
-                    url: "http://localhost:3000/events",
+                    url: "http://localhost:3000/session",
                     type: "GET",
                     xhrFields: {
                         withCredentials: true
                     }
                 });
                 request.done(function(msg) {
-                    console.log(msg.name);
-                    getData();
-                    var endData = [msg.name,getData()];
-                    JSON.stringify(endData);
-                    sendRequest(endData);
+                    console.log(msg.email);
+                    sessionId = msg.email;
+                    getID(sessionId);
                 });
 
                 request.fail(function(jqXHR, textStatus) {
-                    window.location = "interview_platform.html";
+                    alert("session failed");
+
                 });
-        }
-        </script>
+            }
+            </script>
+
+
+            <script>
+            function sendRequest(eventId, EventName){
+                console.post("http://localhost:3000/events/"+eventName+"/interviews/"+eventId+"/end");
+
+                    var request = $.ajax({
+                        url: "http://localhost:3000/events/"+eventName+"/interviews/"+eventId+"/end",
+                        type: "POST",
+                        xhrFields: {
+                            withCredintials: true
+                        }
+                    });
+                    request.done(function(msg) {
+                        console.log("Interview ended");
+                    });
+                    request.fail(function(jqXHR, textStatus) {
+                        console.log("Interview still open");
+                    });
+            }
+            </script>
 
     </head>
 
@@ -79,7 +116,7 @@
                     <li class="active"><font size="6px">INTERVIEW SCREEN</font></li>
                   </ul>
                   <ul class="nav navbar-nav navbar-right"  style="padding-top:0.65%">
-                    <a href="#" class="btn btn-danger"><font color="white">End Interview</font></a>
+                    <button type = "button" onclick="interviewEnd()" class="btn btn-danger" id="endInterview"><font color="white">End Interview</font></a>
                   </ul>
                 </div>
               </div>
@@ -87,8 +124,16 @@
         </div>
         <div class="container">
         <div class="row">
-        <div class="col-md-6">
-            <input type="button">
+        <div class="col-md-6" style="height:80%">
+            <div class="bistri-conference"
+                data-appid="df380091"
+                data-appkey="65b5aab1a2cd5e5bed16ff260e3c0b53"
+                data-room="abc"
+                data-capacity="2"
+                data-media-controls="true"
+                data-chat="true">
+            </div>
+            <script type="text/javascript" src="https://api.bistri.com/bistri.conference.widget.js"></script>
         </div>
         <div class="col-md-1"></div>
         <div class="col-md-5">
@@ -108,7 +153,7 @@
                                 lang = e.options[e.selectedIndex].value;
                             }
                              
-                                function showResult(code,input, lang)
+                                function showResult(code, input, lang)
                                 {
                                   if (code != '') {
                                     var xmlhttp;
@@ -124,7 +169,7 @@
                                       }
                                     }
 
-                                    xmlhttp.open('GET', 'http://192.168.0.101/ideone.php?code=' + encodeURIComponent(code)+'&lang='+encodeURIComponent(lang) + '&input=' + encodeURIComponent(input), true);
+                                    xmlhttp.open('GET', 'etherpad-lite-jquery-plugin-master/ideone.php?code=' + encodeURIComponent(code)+'&lang='+encodeURIComponent(lang) + '&input=' + encodeURIComponent(input), true);
                                     xmlhttp.send();
                                   }
                                 }
