@@ -1,0 +1,172 @@
+<html>
+
+    <head>
+        <title>text editor</title>
+        <script src="jquery.min.js"></script>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <script>
+        function getData(){
+            var url = document.URL;
+            var hash = url.substring(url.indexOf('#')+1);
+            getEventData(hash);
+            console.log(hash)
+            return hash;
+        }
+        </script>
+
+        <script>
+        function sendRequest(endData){
+            var request = $.ajax({
+                url: "http://klsjdfkjhsdkjhfks",
+                type: "POST",
+                data: endData
+            });
+            request.done(function(msg) {
+                console.log("Interview ended");
+            });
+            request.fail(function(jqXHR, textStatus) {
+                console.log("Interview still open");
+            });
+        }
+        </script>
+
+        <script>
+        function endInterview(){
+            var request = $.ajax({
+                    url: "http://localhost:3000/events",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    console.log(msg.name);
+                    getData();
+                    var endData = [msg.name,getData()];
+                    JSON.stringify(endData);
+                    sendRequest(endData);
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    window.location = "interview_platform.html";
+                });
+        }
+        </script>
+
+    </head>
+
+    <body>
+        <div>
+            <nav class="navbar navbar-default">
+              <div class="container-fluid">
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                    <span class="sr-only">Toggle navigation</span>
+                  </button>
+                  <a class="navbar-brand" href="#"></a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                  <ul class="nav navbar-nav">
+                    <li class="active"><font size="6px">INTERVIEW SCREEN</font></li>
+                  </ul>
+                  <ul class="nav navbar-nav navbar-right"  style="padding-top:0.65%">
+                    <a href="#" class="btn btn-danger"><font color="white">End Interview</font></a>
+                  </ul>
+                </div>
+              </div>
+            </nav>
+        </div>
+        <div class="container">
+        <div class="row">
+        <div class="col-md-6">
+            <input type="button">
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-5">
+            <form name="js1">
+                        <label style="padding-top:5%"><font size="5px">Code</font></label>
+                        <script src="js/etherpad.js"></script>
+                        <div id="examplePadIntense"></div>
+                        <script type="text/javascript">
+                            $('#examplePadIntense').pad({'padId':'IP','showChat':'false', 'width' : 100,'height' : 300, 'userName' : 'User Name'}); // sets the pad id and puts the pad in the div
+                        </script>
+                        <hr>
+                            <input type="button" class="btn btn-primary" id="CandR" value="Compile and Run">
+                            <script>
+                            var lang=4;
+                            function setLang (argument) {
+                                var e = document.getElementById("languages");
+                                lang = e.options[e.selectedIndex].value;
+                            }
+                             
+                                function showResult(code,input, lang)
+                                {
+                                  if (code != '') {
+                                    var xmlhttp;
+                                    if (window.XMLHttpRequest) {
+                                      xmlhttp = new XMLHttpRequest();
+                                    } else {
+                                      document.getElementById('output').innerHTML = 'HERE IS AN ERROR!';
+                                    }
+
+                                    xmlhttp.onreadystatechange = function() {
+                                      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                                        document.getElementById('output').innerHTML = xmlhttp.responseText;
+                                      }
+                                    }
+
+                                    xmlhttp.open('GET', 'http://192.168.0.101/ideone.php?code=' + encodeURIComponent(code)+'&lang='+encodeURIComponent(lang) + '&input=' + encodeURIComponent(input), true);
+                                    xmlhttp.send();
+                                  }
+                                }
+                                $(document).ready(function() {
+                                    $("#CandR").click(function() {
+                                        var padId = 'examplePadIntense';//Id of the div in which etherpad lite is integrated
+                                        var epframeId = 'epframe'+ padId;
+                                        var frameUrl = $('#'+ epframeId).attr('src').split('?')[0];
+                                        var contentsUrl = frameUrl + "/export/txt";
+                                        console.log(lang);
+                                        console.log(contentsUrl);
+                                        var langType = 10;/*
+                                        if(lang.indexOf("2") > -1){
+                                            langType = 11;
+                                        }
+                                        else if(lang.indexOf("3") > -1){
+                                            langType = 1;
+                                        }
+                                        else if(lang.indexOf("4") > -1){
+                                            langType = 10;
+                                        }
+                                        else if(lang.indexOf("5") > -1){
+                                            langType = 35;
+                                        }*/ 
+                                        jQuery.get(contentsUrl, function(data) {
+                                            showResult(data, $('#input').val(), langType); 
+                                        });
+                                    });
+                                });
+                            </script>
+                        <hr>
+                        <div class="col-md-6">
+                            <font size="5px"><b>Input:</b></font>
+                            <textarea class="form-control col-md-10" rows="3" id="input"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <font size="5px"><b>Output:</b></font>
+                            <div id="output" height="50px" ></div>
+                        </div>
+                    </form>
+        </div>
+    </div>
+</div>
+    </body>
+</html>
