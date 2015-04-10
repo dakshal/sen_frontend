@@ -1,17 +1,16 @@
-
+<html>
 <head>
-<title>Maulik Solanki - SEN2015</title>
+<title>Sign Up Interviewer</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </head>
-    <body>
+    <body bgcolor="#0E1F2A">
       <script>
           function signUp(){
             var request = $.ajax({
-                          url: "http://localhost:3000/users",
+                          url: "http://192.168.0.101:3000/users",
                           type: "PUT",
                           data: {
                               name: $("#inputName").val,
@@ -29,55 +28,57 @@
                       });
 
                       request.fail(function(jqXHR, textStatus) {
-                        console.log(jqXHR);
-                        console.log(textStatus);
                           alert("Please enter correct info.");
                       });
           }
           </script>
 
-      
-        <h1 align="center">Sign Up</h1>
-        <br>
-        <form class="form-horizontal" style="margin: 0 auto; width:50%;">
+      <div class="well well-sm text-center" style="background-color:#173245;">
+        <div><h2 style="color:white">Interview Platform</h2></div>
+      </div> 
+      <div class="panel panel-primary" style="margin: 0 auto; margin-bottom: 5%; width:50%;">
+        <div class="panel-heading" >
+          <div class="panel-title text-center"><h3>Sign Up</h3></div>
+        </div>
+        <div class="panel-body" style="background:#E8EFF7;">
+          <form class="form-horizontal" style="margin: 0 auto; width:100%;">
             <fieldset>
               <legend style="width: 100%; text-align: center;">Basic Information</legend>
+              
               <div class="form-group">
-                <label for="inputName" class="col-lg-2 control-label">Full Name</label>
-                
+                <label for="inputName" class="col-lg-3 control-label">Full Name</label>                
                 <div class="col-lg-8">
                   <input class="form-control" id="inputName" placeholder="Full Name" type="text">
                 </div>
               </div>
               
               <div class="form-group">
-                <label for="inputEmail" class="col-lg-2 control-label">Email</label>
+                <label for="inputEmail" class="col-lg-3 control-label">Email</label>
 
                 <div class="col-lg-8">
                   <input class="form-control" id="inputEmail" placeholder="Email" type="text">
                 </div>
               </div>
               <div class="form-group">
-                <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+                <label for="inputPassword" class="col-lg-3 control-label">Password</label>
                 <div class="col-lg-8">
                   <input class="form-control" id="inputPassword" placeholder="Password" type="password">                
                 </div>
               </div>
               <legend style="width: 100%; text-align: center;">Your Profile</legend>
                           
-              </div>
               <div>
                 <div class="form-group">
                 <label for="interviews" class="col-lg-5 control-label">Number of Interviews Conducted</label>
-                <div class="col-lg-5">
-                  <input class="form-control" id="interview" type="password">                
+                <div class="col-lg-2">
+                  <input class="form-control" id="interview">                
                 </div>
               </div>
               <div>
                 <div class="form-group">
-                <label for="degree" class="col-lg-2 control-label">Degree</label>
+                <label for="degree" class="col-lg-3 control-label">Degree</label>
                 <div class="col-lg-8">
-                  <input class="form-control" id="degree" type="password">                
+                  <input class="form-control" id="degree">                
                 </div>
               </div>
               
@@ -85,26 +86,26 @@
                 <label for="select" class="col-lg-6 control-label">Area of Expertise in Conducting Interview</label>
                 <div class="col-lg-4">
                   <select class="form-control" id="select">
-                    <option value="frontend_developer">Front-End Developer</option>
-                    <option value="frontend_developer">Back-End Developer</option>
-                    <option value="frontend_developer">Data Analyst</option>
-                    <option value="frontend_developer">Networks</option>
-                    <option value="frontend_developer">DBMS</option>
-
-
-                
+                    <option>Front-End Developer</option>
+                    <option>Back-End Developer</option>
+                    <option>Data Analyst</option>
+                    <option>Networks</option>
+                    <option>DBMS</option>                
                   </select>
                   
                 </div>
               </div>
               <div class="form-group">
-                <div class="col-lg-10 col-lg-offset-2">
+                <div class="col-lg-10 col-lg-offset-3">
                   <button type="reset" class="btn btn-default">Cancel</button>
-                  <button type="submit" class="btn btn-primary" onClick="signUp()">Submit</button>
+                  <button type="submit" onClick="signUp()" class="btn btn-primary">Submit</button>
                 </div>
               </div>
             </fieldset>
         </form>
-      
+        </div>
+      </div>
+
+        
     </body>
 </html>

@@ -1,8 +1,11 @@
 <html>
     <head>
-        <link rel="stylesheet" href="bootstrap.min.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
         <script src="jquery.min.js"></script>
-        <link rel="stylesheet" href="bootstrap.css">
+        <link rel="stylesheet" href="css/bootstrap.css">
+
+        <title>Edit Events</title>
+
         <script >
             function Auth() {
                 var request = $.ajax({
@@ -23,94 +26,6 @@
                     alert("Unable to Authenticate");
                 });
             }
-            function getData () {
-            var url = document.URL;
-            var hash = url.substring(url.indexOf('#')+1);
-            getEventData(hash);
-            console.log(hash);
-            }
-            function getEventData(eventName) {
-                var link = "http://localhost:3000/events/";
-                link = link.concat(eventName);
-                console.log(link);
-                var request = $.ajax({
-                    url: link,
-                    type: "GET",
-                    xhrFields: {
-                        withCredentials: true
-                    }
-                });
-                request.done(function(msg) {
-                    setData(msg);
-                });
-
-                request.fail(function(jqXHR, textStatus) {
-                });
-            }
-            function setData (comp) {
-                document.getElementById("inputEventName").value = comp.name;
-                var details = comp.details;
-                console.log(details['Starting Date']);
-                document.getElementById("inputEventPointerCriteria").value = details['Pointer Criteria'];
-                $('#inputStartDate').val(details['Starting Date']);
-                $('#inputEndingDate').val(details['Ending Date']);
-                 // var crit = "{'saas': { 'description' : '987', 'min' : 4, 'max' : '87'}, 'abc': { 'description' : 'lgl,j', 'min' : 3, 'max' : '789'}}";
-                console.log(comp.criteria.length);
-                // var table = document.getElementById("dataTable");
-/*                for (var i = 0; i < comp.criteria.length; i++) {
-                    addRow("dataTable");
-                    var data = comp.criteria[i];
-                        var rowDisAmt = $(table.rows.item(i).cells[0]).find('inputCriteriaType').val(data[0]);
-                        var rowDisAmt = $(table.rows.item(i).cells[1]).find('inputMinVal').val(data[1]);
-                        var rowDisAmt = $(table.rows.item(i).cells[2]).find('inputMaxVal').val(data[2]);
-                        var rowDisAmt = $(table.rows.item(i).cells[3]).find('inputDescription').val(data[3]);
-                }
-            }
-            var table = document.getElementById("dataTable");
-            var column_count = table.rows[0].cells.length;
-            var row = table.rows[0];
-            if(column_count>0){
-                for(var index = 0; index < comp.criteria.length;index++){
-                    addRow("dataTable");
-                    var data = comp.criteria[index];
-                    console.log(table.rows[0].cells[0].getElementsByName('inputDescription').value);
-            //Or marks[index] = document.getElementsByName('inputcell' + index)[0].value;
-                }
-            }*/
-            for(var index = 0; index < comp.criteria.length;index++){
-                addRow("dataTable");
-            }
-            var x = document.getElementsByClassName('myid1');
-            // console.log(x.length);
-            for(i = 0; i < x.length-1; i++) {
-                var data = comp.criteria[i];
-                // console.log(data[1]);
-                x[i].value = data[0];
-            }
-            var x = document.getElementsByClassName('myid2');
-            // console.log(x.length);
-            for(i = 0; i < x.length-1; i++) {
-                var data = comp.criteria[i];
-                // console.log(data[1]);
-                x[i].value = data[1];
-            }
-             var x = document.getElementsByClassName('myid3');
-            // console.log(x.length);
-            for(i = 0; i < x.length-1; i++) {
-                var data = comp.criteria[i];
-                // console.log(data[1]);
-                x[i].value = data[2];
-            }
-             var x = document.getElementsByClassName('myid4');
-            // console.log(x.length);
-            for(i = 0; i < x.length-1; i++) {
-                var data = comp.criteria[i];
-                // console.log(data[1]);
-                x[i].value = data[3];
-            }
-            document.getElementById("dataTable").deleteRow(x.length-1);
-        }
-             window.onpaint = getData();
         </script>
         <script language="javascript">
             function addRow(tableID) {
@@ -141,8 +56,7 @@
                 else {
                     alert("Atleast one criteria required");
                 }
-            }
-            </script>
+            }</script>
         <script type="text/javascript">
             function cancleEvent() {
                 window.location = "userProfile.html";
@@ -224,9 +138,16 @@
         </script>
     </head>
     <body>
-        <form class="form-horizontal">
+    <div class="well well-sm text-center" style="background-color:#163541;">
+        <div><h2 style="color:white">Interview Platform</h2></div>
+    </div> 
+      <div class="panel panel-primary" style="margin: 0 auto; margin-bottom: 5%; width:90%;">
+        <div class="panel-heading" >
+          <div class="panel-title text-center"><h3>Edit Event</h3></div>
+        </div>
+        <div class="panel-body" style="background:#E8EFF7;">
+          <form class="form-horizontal">
             <fieldset>
-                <legend>Create Event</legend>
                 <div class="form-group">
                     <label for="inputEventName" class="col-lg-2 control-label">Event Name</label>
                     <div class="col-lg-3">
@@ -235,23 +156,23 @@
                 </div>
                 <div class="form-group">
                     <label for="inputEventCriteria" class="col-lg-2 control-label">Event Criteria</label>
-                    <div class="col-lg-9">
+                    <div class="col-lg-10">
                         <a href="#" class="btn btn-primary" onclick="addRow('dataTable')">Add New Criteria</a>
-                        <table class="table table-striped table-hover " id="dataTable">
+                        <table class="table" id="dataTable">
                             <tbody>
                                 <tr>
-                                    <td><div class="form-group col-lg-9">
-                                            <input class="form-control myid1" type="text" id="inputCriteriaType">
+                                    <td class="form-group col-lg-5">
+                                            <input class="form-control" type="text" id="inputCriteriaType" placeholder="Criteria Name">
+                                        </td>
+                                    <td class="form-group col-lg-1">
+                                            <input class="form-control" type="number" id="inputMinVal" placeholder="Min">
+                                        </td>
+                                    <td class="form-group col-lg-1">
+                                            <input class="form-control" type="number" id="inputMaxVal" placeholder="Max">
                                         </div></td>
-                                    <td><div class="form-group col-lg-9">
-                                            <input class="form-control myid2" type="number" id="inputMinVal">
-                                        </div></td>
-                                    <td><div class="form-group col-lg-9">
-                                            <input class="form-control myid3" type="number"   id="inputMaxVal">
-                                        </div></td>
-                                    <td><div class="form-group col-lg-9">
-                                            <input class="form-control myid4" type="text"   id="inputDescription">
-                                        </div></td>
+                                    <td class="form-group col-lg-6">
+                                            <input class="form-control" type="text" id="inputDescription" placeholder="Description">
+                                        </td>
                                     <td>
                                         <a href="#" class="btn btn-danger" onclick="deleteRow(this)">Delete</a>
                                     </td>
@@ -269,18 +190,17 @@
                 <div class="form-group">
                     <label class="col-lg-2 control-label">Starting From</label>
                     <div class="col-lg-2">
-                        <input type="date" class="form-control" id="inputStartDate" max="2050-12-31" min="2000-01-01" placeholder"dd/mm/yyyy">
+                        <input type="date" class="form-control" id="inputStartDate" max="2050-12-31" min="2000-01-01" placeholder="dd/mm/yyyy">
                     </div>
                     <label class="col-lg-2 control-label">Ending Date</label>
                     <div class="col-lg-2">
-                        <input type="date" class="form-control" id="inputEndingDate" max="2050-12-31" min="2000-01-01">
+                        <input type="date" class="form-control" id="inputEndingDate" max="2050-12-31" min="2000-01-01" placeholder="dd/mm/yyyy">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="textArea" class="col-lg-2 control-label">Details</label>
                     <div class="col-lg-9">
                         <textarea class="form-control" rows="3" id="textArea" id="inputEventDetails"></textarea>
-                        <span class="help-block">A longer block of help text that breaks onto a new line and may extend beyond one line.</span>
                     </div>
                 </div>
                 <div class="form-group">
@@ -291,5 +211,8 @@
                 </div>
             </fieldset>
         </form>
+        </div>
+      </div>
+        
     </body>
 </html>

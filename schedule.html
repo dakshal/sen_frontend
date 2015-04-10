@@ -3,16 +3,16 @@
 <head>
 	<title>Schedule interview</title>
   	<meta charset="utf-8">
-  	<meta name="viewport" content="width=device-width, initial-scale=1">
-  	<link rel="stylesheet" href="css/bootstrap.min.css">
-  	<script src="jquery.min.js"></script>
-  	<script src="js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
   	<script>
   	var events;
   	function get_event() {
         var request = $.ajax({
-            url: "http://localhost:3000/events",
+            url: "http://192.168.0.106:3000/events",
             type: "GET",
             xhrFields: {
                 withCredentials: true
@@ -22,40 +22,10 @@
             events=msg;
 		  	for(var eventsName in events){
 		  		$('<option>'+events[eventsName]+'</option>').appendTo('#eventName');
-          getRegistration();
 		  	}
         });
         request.fail(function(jqXHR, textStatus) {
-            window.location = "interview_platform.html";
-        });
-    }
-    $(document).ready( function() {
-      $( ".target" ).change(function() {
-          getRegistration();
-      });
-    });
-    function getRegistration() {
-      var eventname = document.getElementById("eventName");
-        var request = $.ajax({
-            url: "http://localhost:3000/events/"+eventname.value+"/registered",
-            type: "GET",
-            xhrFields: {
-                withCredentials: true
-            }
-        });
-        request.done(function(msg) {
-            events=msg;
-            var selectInterviewee=$('#intervieweeName');
-            selectInterviewee.empty();
-            var selectInterviewer=$('#interviewerName');
-            selectInterviewer.empty();
-        for(var eventsName in events){
-          $('<option>'+events[eventsName]+'</option>').appendTo('#intervieweeName');
-          $('<option>'+events[eventsName]+'</option>').appendTo('#interviewerName');
-        }
-        });
-        request.fail(function(jqXHR, textStatus) {
-            window.location = "interview_platform.html";
+           window.location = "interview_platform.html";
         });
     }
     window.onpaint = get_event();
@@ -65,57 +35,23 @@
   	function validate(){
   		var eventname = document.getElementById("eventName");
   		var eventdate = document.getElementById("date");
-      var interviewee = document.getElementById("intervieweeName");
-      var interviewer = document.getElementById("interviewerName");
   		var request = $.ajax({
-            url: "http://localhost:3000/events/"+eventname.value,
+            url: "http://192.168.0.106:3000/events/"+eventname.value,
             type: "GET",
             xhrFields: {
                 withCredentials: true
             }
         });
         request.done(function(msg) {
-          console.log(msg.details['Ending Date'], eventdate.value);
-          var D1 = msg.details['Ending Date'];
-          var D2 = eventdate.value;
-          var D3 = msg.details['Starting Date'];
-          if (((new Date(D1).getTime()) >= (new Date(D2).getTime())) && ((new Date(D3).getTime()) <= (new Date(D2).getTime()))) {
-            if(interviewee.value!=interviewer.value){
-              submitData();
+            if(eventdate<=msg.endingdate){
+            	submitData();
             }
             else{
-              var output = document.getElementById("alert1");
-              var val="";
-              var ele = document.createElement("div");
-              ele.setAttribute("id","openAlert");
-              ele.setAttribute("class","alert alert-dismissible alert-danger");
-              ele.innerHTML="Interviewee and Interviewer must be different";
-              var div = document.createElement("input");
-              div.setAttribute("type", "button");
-              div.setAttribute("class", "close");
-              div.setAttribute("data-dismiss", "alert");
-              div.innerHTML = "X";
-              ele.appendChild(div);
-              output.appendChild(ele);
+            	alert("re-enter the data")
             }
-          }
-          else{
-              var output = document.getElementById("alert2");
-              var ele = document.createElement("div");
-              ele.setAttribute("id","openAlert");
-              ele.setAttribute("class","alert alert-dismissible alert-danger");
-              ele.innerHTML="Date is already passed or not available";
-              var div = document.createElement("input");
-              div.setAttribute("type", "button");
-              div.setAttribute("class", "close");
-              div.setAttribute("data-dismiss", "alert");
-              div.innerHTML = "X";
-              ele.appendChild(div);
-              output.appendChild(ele);
-          }
         });
         request.fail(function(jqXHR, textStatus) {
-            window.location = "interview_platform.html";
+           window.location = "interview_platform.html";
         });
   	}
   	</script>
@@ -126,25 +62,21 @@
   		var interviewer = document.getElementById("interviewerName");
   		var date = document.getElementById("date");
   		var time = document.getElementById("time");
-  		var data = {};
+  		var data = {"name":eventName.value, "interviewee":interviewee.value, "interviewer":interviewer.value, "date":date.value, "time":time.value};
   		JSON.stringify(data);
   		var request = $.ajax({
-            url: "http://localhost:3000/events/"+eventName.value+"/interviews",
+            url: "http://192.168.0.106:3000/events/"+eventname.value+/"interviews",
             type: "PUT",
-            data: {"name":eventName.value,
-                   "interviewee":interviewee.value,
-                   "interviewer":interviewer.value,
-                   "timestamp":date.value+" "+time.value
-            },
+            data: JSON.stringify(data);
             xhrFields: {
                 withCredentials: true
             }
         });
-        request.done(function(msg) {
-            window.location = "adminProfile.html";
+        if(request.create==true) {
+            
         });
-         request.fail(function(jqXHR, textStatus) {
-            // window.location = "interview_platform.html";
+        fail {
+           window.location = "interview_platform.html";
         });
   		console.log(data);
   	}
@@ -153,53 +85,58 @@
 </head>
 
 <body>	
-	<div style="position:fixed; top:10%; left:5%; width:50%">
-		<form class="form-horizontal">
-		  <fieldset>
-		    <legend>Schedule Event</legend>
-		    <div class="form-group">
-		      <label for="inputEmail" class="col-lg-2 control-label">Event Name:</label>
-		      <div class="col-lg-10">
-		        <select class="form-control target" id="eventName" required>
-		        </select>
-		      </div>
-		    </div>
-		    <div class="form-group">
-		      <label for="inputInterview" class="col-lg-2 control-label">Interviewee name:</label>
-		      <div class="col-lg-10">
-            <select class="form-control" id="intervieweeName" placeholder="Interviewee Name" required></select>
-
-		      </div>
-		    </div>
-		    <div class="form-group">
-		      <label for="inputInterviewer" class="col-lg-2 control-label">Interviewer Name:</label>
-		      <div class="col-lg-10">
-		        <select class="form-control" id="interviewerName" placeholder="Interviewer Name" required></select>
-		      </div>
-		    </div>
-        <div  id="alert1"></div>
-		    <div class="form-group">
-		      <label for="inputDate" class="col-lg-2 control-label">Date:</label>
-		      <div class="col-lg-10">
-		        <input type="date" class="form-control" id="date" required>
-		      </div>
-		    </div>
-        <div  id="alert2"></div>
-		    <div class="form-group">
-		      <label for="inputEmail" class="col-lg-2 control-label">Start Time:</label>
-		      <div class="col-lg-10">
-		        <input type="time" class="form-control" id="time" required>
-		      </div>
-		    </div>
-		    <div class="form-group">
-		      <div class="col-lg-10 col-lg-offset-2">
-		        <button type="reset" class="btn btn-default">Cancel</button>
-		        <button type="button" class="btn btn-primary" onClick="validate()">Submit</button>
-		      </div>
-		    </div>
-		  </fieldset>
-		</form>
-	</div>
+  <div class="well well-sm text-center" style="background-color:#163541;">
+        <div><h2 style="color:white">Interview Platform</h2></div>
+  </div>
+  <div class="panel panel-primary" style="margin: 0 auto; margin-top: 2%; width:50%;">
+        <div class="panel-heading" >
+          <div class="panel-title text-center"><h4>Schedule Event</h4></div>
+        </div>
+        <div class="panel-body" style="background:#E8EFF7;">
+          <form class="form-horizontal">
+      <fieldset>
+        <div class="form-group">
+          <label for="inputEmail" class="col-lg-3 control-label">Event Name</label>
+          <div class="col-lg-8">
+            <input type="text" class="form-control" id="eventName" placeholder="Event Name" type="text">
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail" class="col-lg-3 control-label">Interviewee name</label>
+          <div class="col-lg-8">
+            <input type="text" class="form-control" id="intervieweeName" placeholder="Interviewee Name" type="text">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail" class="col-lg-3 control-label">Interviewer name</label>
+          <div class="col-lg-8">
+            <input type="text" class="form-control" id="interviewerName" placeholder="Interviewer Name" type="text">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail" class="col-lg-3 control-label">Date</label>
+          <div class="col-lg-4">
+            <input type="date" class="form-control" placeholder="dd/mm/yyyy" id="date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputEmail" class="col-lg-3 control-label">Start Time</label>
+          <div class="col-lg-5">
+            <input type="time" class="form-control" placeholder="HH:MM AM/PM" id="time">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10 col-lg-offset-2">
+            <button type="reset" class="btn btn-default">Cancel</button>
+            <button type="button" class="btn btn-primary" onClick="validate()">Submit</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+        </div>
+      </div>
+	
 </body>
 
 </html>
