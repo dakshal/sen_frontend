@@ -1,102 +1,329 @@
-<head>
-<title>Event History</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-</head>
-    <body >
-      <script>
-         
-      </script>   
-      <div class="well well-sm text-center" style="background-color:#173245; padding-left:8%">
-	    <div><h1 style="color:white">Interview Platform
-	      <a href="interview_platform.html" class="btn btn-primary btn-lg" id="signOut" style="float:right">Sign Out</span></a> 
-	    </h1></div>
-	  </div>      
+<!DOCTYPE html>
 
-    <div class="container col-md-12" style="padding-top:2%; padding-left:5%; padding-right:5%">
-      <div class="row">
-      <div class="col-md-2">
-        <ul class="nav nav-list nav-stacked">
-          <li class="nav-header" style="font-size:20px"><b>Quick Links</b></li>
-          <li>
-            <a href="userProfile.html">Profile</a>
-          </li>
-          <li><a href="pastEvents.html">Event History </a>
-          </li>
-          <li><a href="" data-toggle="modal" data-target="#eventModal">Future Events </a>
-          </li>
-          <li><a href="changePassword.html">Change Password </a>
-          </li>
-        </ul>
-    </div>
-    
-      <div class="panel panel-primary" style="margin: 0 auto; width:80%;  float:right">
-        <div class="panel-heading" >
-          <div class="panel-title text-center"><h4>Past Events</h4></div>
-        </div>          
-          <div class="panel-body" style="background:#E8EFF7;">
-            
-          <table class="table" id="eventTable" style="width:90%" align="center">
-                <thead>
-                    <tr>
-                        <th class="col-lg-1">#</th>
-                        <th class="col-lg-5">Event Name</th>
-                        <th class="col-lg-5">Date</th>
-                        <th ></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Column content</td>
-                        <td>Column content</td>
-                        <td><a href="#" class="btn btn-primary" onclick="editEvent(this)">View results</span></a></td>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+<html>
+    <head>
+        <title>Past Events</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="vedcss/bootstrap.min.css">
+        <script src="jquery.min.js"></script>
+
+
+        <script type="text/javascript">
+            function Auth() {
+                var request = $.ajax({
+                    url: "http://localhost:3000/session",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                        window.location = "userProfile.html";
+                    } else if (msg['role'] == "admin") {
+                        get_event();
+                    }
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    window.location = "interview_platform.html";
+                });
+            }
+            window.onpaint = Auth();
+        </script>
+        <script>
+            var eventNames;
+            var eventLength;
+            function get_event() {
+            var currentTime;
+              var request = $.ajax({
+                url: "http://localhost:3000/time",
+                type: "GET",
+                xhrFields: {
+                  withCredentials: true
+                }
+              });
+              request.done(function(msg) {
+                console.log(msg);
+                currentTime = new Date(msg['current_time']).getTime();
+                console.log(currentTime);
+              });
+              request.fail(function(jqXHR, textStatus) {
+                console.log("time not found");
+              });
+                var request = $.ajax({
+                    url: "http://localhost:3000/events",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    eventNames = msg;
+                    for (var i = 0; i < eventNames.length; i++) {
+                        console.log(eventNames[i]);
+                        console.log(currentTime);
+                        getEventData(eventNames[i], currentTime);
+                    }
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    alert(" ");
+                    // window.location = "interview_platform.html";
+                });
+            }
+            // window.onpaint = get_event();
+
+
+        </script>
+        <script language="javascript">function setEventData(tableID, eventDetails, row, j) {
+                console.log(eventDetails);
+                var table = document.getElementById(tableID);
+                table.rows[j].cells[0].innerHTML = j;
+                table.rows[j].cells[1].innerHTML = eventDetails['name'];
+                var xyz = eventDetails['details'];
+                table.rows[j].cells[2].innerHTML = xyz['Details'];
+                table.rows[j].cells[3].innerHTML = xyz['Starting Date'];
+                table.rows[j].cells[4].innerHTML = xyz['Ending Date'];
+                table.rows[j].cells[5].innerHTML = table.rows[1].cells[5].innerHTML;
+                table.rows[j].cells[6].innerHTML = table.rows[1].cells[6].innerHTML;
+            }
+        </script>
+        <script language="javascript">
+            var k = 1;
+            function createTable (tableID) {
+                var table = document.getElementById("eventTable");
+                for (var i = table.rows.length-1; i > 1; i--) {
+                    var rowCount = table.rows.length;
+                    if (rowCount > 1) {
+                        document.getElementById("eventTable").deleteRow(i);
+                    }
+                }
+                k=1;
+                get_event();
+            }
+            function addRow(tableID, eventDetails) {
+                var table = document.getElementById(tableID);
+                var rowCount = table.rows.length;
+                if (k > 1) {
+                    var row = table.insertRow(rowCount);
+                    var colCount = table.rows[1].cells.length;
+                    for (var i = 0; i < colCount; i++) {
+                        var newcell = row.insertCell(i);
+                        newcell.innerHTML = table.rows[1].cells[i].innerHTML;
+                    }
+                }
+                setEventData(tableID, eventDetails, row, k++);
+            }
+            function deleteRow(r) {
+                var table = document.getElementById("dataTable");
+                var rowCount = table.rows.length;
+                if (rowCount > 1) {
+                    var i = r.parentNode.parentNode.rowIndex;
+                    document.getElementById("dataTable").deleteRow(i);
+                }
+                else {
+                    alert("Atleast one criteria required");
+                }
+            }</script>
+        <script >
+            function Auth() {
+                var request = $.ajax({
+                    url: "http://localhost:3000/session",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+
+                });
+                request.done(function(msg) {
+                    if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                        window.location = "userProfile.html";
+                    } else if (msg['role'] == "admin") {
+                    }
+                    window.location = "profilepage.html";
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    alert("Unable to Authenticate");
+                });
+            }
+        </script>
+
+        <script>
+       
+            function getEventData(eventName, currentTime) {
+                var link = "http://localhost:3000/events/";
+                link = link.concat(eventName);
+                console.log(link);
+                var request = $.ajax({
+                    url: link,
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    var xyz = msg['details'];
+                    var date = xyz['Ending Date'];
+                    console.log(currentTime);
+                    if(new Date(date).getTime()<currentTime){
+                        addRow('eventTable', msg);
+                    }
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                });
+            }
+            function editEvent (r) {
+                var table = document.getElementById("eventTable");
+                var i = r.parentNode.parentNode.rowIndex;
+                console.log(i);
+                var data = table.rows[i].cells[1].innerHTML;
+                // console.log(data);
+
+                    window.location = "editEvents.html"+data;
+            }
+        </script>
+        <script>
+            $(document).ready(function() {
+                $("#signOut").click(function() {
+                    var request = $.ajax({
+                        url: "http://localhost:3000/logout",
+                        type: "GET",
+                        xhrFields: {
+                            withCredentials: true
+                        }
+
+                    });
+                    request.done(function(msg) {
+                        window.location = "interview_platform.html";
+                    });
+
+                    request.fail(function(jqXHR, textStatus) {
+                        alert("Invalid email or password.");
+                    });
+                });
+            });
+        </script>
+        <script>
+        
+        $('button.btnDelete').on('click', function (e) {
+            e.preventDefault();
+            var id = $(this).closest('tr').data('id');
+            $('#myModal').data('id', id).modal('show');
+        });
+
+        $('#btnDelteYes').click(function () {
+            var id = $('#myModal').data('id');
+            $('[data-id=' + id + ']').remove();
+            $('#myModal').modal('hide');
+        });
+        var rowId;
+        function getid (r) {
+            rowId = r.parentNode.parentNode.rowIndex;
+            console.log(rowId);
+         }
+         function deleteEvent (r) {
+            console.log(rowId);
+            var table = document.getElementById("eventTable");
+            var data = table.rows[rowId].cells[1].innerHTML;
+            console.log(data);
+            var request = $.ajax({
+                    url: "http://localhost:3000/events/"+data,
+                    type: "DELETE",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+
+                });
+                request.done(function(msg) {
+                    console.log(msg);
+                    if (msg.deleted) {
+                        createTable('eventData');
+                    }
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    alert("Unable to delete.");
+                });          
+            } 
+        </script>
+    </head>
+
+    <body>
+        <div class="well well-sm text-center" style="background-color:#163541;">
+            <div><h2 style="color:white">Interview Platform - Administrator
+                <ul class="nav nav-pills" style="float:right">
+                    <li class="active"><a href="adminProfile.html" class="btn btn-primary">Home</a></li>
+                    <li class="active"><a href="#" class="btn btn-primary" id="signOut" style="float:right">Sign out</a></li>
+                </ul>
+            </h2></div>
         </div>
-      </div>     
 
-      <div class="modal fade" id="eventModal" >
-  <div class="modal-dialog" style="padding-top: 5%; width:50%">
-    <div class="modal-content">
-      <div class="modal-header" style="background-color: #337ab7; border-color: #337ab7;">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title" align ="center" style="color:white">Future Events</h4>
-      </div>
-      <br>
-      <div class="modal-body"  align="center">
-        <table class="table" id="eventTable" style="width:90%" align="center">
+        <div class="panel panel-primary" style="margin: 0 auto; margin-top: 2%; width:95%;">
+        
+        <div class="panel-body" style="background:#E8EFF7;">
+           <br><br>
+            <table class="table" id="eventTable">
                 <thead>
                     <tr>
-                        <th class="col-lg-1">#</th>
-                        <th class="col-lg-6">Event Name</th>
-                        <th class="col-lg-4">Date</th>
+                        <th>#</th>
+                        <th>Event Name</th>
+                        <th>Event Description</th>
+                        <th>Start date</th>
+                        <th>End Date</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
-                        <td>Column content</td>
-                        <td>Column content</td>
+                        <td class="col-lg-1">1</td>
+                        <td class="col-lg-1"><a href="#">Column content</a></td>
+                        <td class="col-lg-3">Column content</td>
+                        <td class="col-lg-1">Column content</td>
+                        <td class="col-lg-1">Column content</td>
+                        <td class="col-lg-1"><a href="#" class="btn btn-warning" onclick="editEvent(this)">Edit</span></a></td>
+                        <td class="col-lg-1"><button type="button" class="btn btn-danger" onclick="getid(this)" data-toggle="modal" data-target="#deleteModal">Delete</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
-    </div>
-  </div>
-</div>
 
+        </div>
+        
+        </div>
+      </div>
+       
+           
+        <div class="modal fade" id="deleteModal" >
+          <div class="modal-dialog" style="padding-top: 5%; width:40%">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" align ="center">Delete Event</h4>
+              </div>
+              <br>
+              <div class="modal-body" >
+                <p style="font-family:arial; font-size:20px; text-align:center">Are you sure you want to delete this event?</p>
+                <br>
+                <p style="font-family:arial; font-size:17px; text-align:center">
+                    <button class="btn btn-success" onclick="deleteEvent(this)" data-dismiss="modal" style="font-size:20px;">Yes</button>
+                    <button class="btn btn-danger" data-dismiss="modal" style="font-size:20px">No</button>
+                </p>
+              </div>
+                    
+            </div>
+          </div>
 
-<!-- Modal -->
+        <!-- Modal -->
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>    
+    <script src="js/bootstrap.min.js"></script>
     </body>
-</html>
+
+</html> 

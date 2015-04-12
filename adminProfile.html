@@ -5,17 +5,55 @@
         <title>Admin</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="bootstrap.min.css">
+        <link rel="stylesheet" href="vedcss/bootstrap.min.css">
         <script src="jquery.min.js"></script>
 
 
+        <script type="text/javascript">
+            function Auth() {
+                var request = $.ajax({
+                    url: "http://localhost:3000/session",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                        window.location = "userProfile.html";
+                    } else if (msg['role'] == "admin") {
+                        get_event();
+                    }
+                });
 
+                request.fail(function(jqXHR, textStatus) {
+                    window.location = "interview_platform.html";
+                });
+            }
+            window.onpaint = Auth();
+        </script>
         <script>
             var eventNames;
             var eventLength;
             function get_event() {
+            var currentTime;
+              var request = $.ajax({
+                url: "http://localhost:3000/time",
+                type: "GET",
+                xhrFields: {
+                  withCredentials: true
+                }
+              });
+              request.done(function(msg) {
+                console.log(msg);
+                currentTime = new Date(msg['current_time']).getTime();
+                console.log(currentTime);
+              });
+              request.fail(function(jqXHR, textStatus) {
+                console.log("time not found");
+              });
                 var request = $.ajax({
-                    url: "http://192.168.0.104:3000/events",
+                    url: "http://localhost:3000/events",
                     type: "GET",
                     xhrFields: {
                         withCredentials: true
@@ -24,16 +62,18 @@
                 request.done(function(msg) {
                     eventNames = msg;
                     for (var i = 0; i < eventNames.length; i++) {
-                        console.log(eventNames);
-                        getEventData(eventNames[i]);
+                        console.log(eventNames[i]);
+                        console.log(currentTime);
+                        getEventData(eventNames[i], currentTime);
                     }
                 });
 
                 request.fail(function(jqXHR, textStatus) {
-                    //window.location = "interview_platform.html";
+                    alert(" ");
+                    // window.location = "interview_platform.html";
                 });
             }
-            window.onpaint = get_event();
+
 
 
         </script>
@@ -43,7 +83,7 @@
                 table.rows[j].cells[0].innerHTML = j;
                 table.rows[j].cells[1].innerHTML = eventDetails['name'];
                 var xyz = eventDetails['details'];
-                table.rows[j].cells[2].innerHTML = xyz['date'];
+                table.rows[j].cells[2].innerHTML = xyz['Details'];
                 table.rows[j].cells[3].innerHTML = xyz['Starting Date'];
                 table.rows[j].cells[4].innerHTML = xyz['Ending Date'];
                 table.rows[j].cells[5].innerHTML = table.rows[1].cells[5].innerHTML;
@@ -90,7 +130,7 @@
         <script >
             function Auth() {
                 var request = $.ajax({
-                    url: "http://192.168.0.104:3000/session",
+                    url: "http://localhost:3000/session",
                     type: "GET",
                     xhrFields: {
                         withCredentials: true
@@ -102,7 +142,7 @@
                         window.location = "error.html";
                     } else if (msg['role'] == "admin") {
                     }
-                    //window.location = "profilepage.html";
+                    window.location = "profilepage.html";
                 });
 
                 request.fail(function(jqXHR, textStatus) {
@@ -113,8 +153,8 @@
 
         <script>
 
-            function getEventData(eventName) {
-                var link = "http://192.168.0.104:3000/events/";
+            function getEventData(eventName, currentTime) {
+                var link = "http://localhost:3000/events/";
                 link = link.concat(eventName);
                 console.log(link);
                 var request = $.ajax({
@@ -125,7 +165,12 @@
                     }
                 });
                 request.done(function(msg) {
-                    addRow('eventTable', msg);
+                    var xyz = msg['details'];
+                    var date = xyz['Ending Date'];
+                    console.log(currentTime);
+                    if(new Date(date).getTime()>currentTime){
+                        addRow('eventTable', msg);
+                    }
                 });
 
                 request.fail(function(jqXHR, textStatus) {
@@ -145,7 +190,7 @@
             $(document).ready(function() {
                 $("#signOut").click(function() {
                     var request = $.ajax({
-                        url: "http://192.168.0.104:3000/logout",
+                        url: "http://localhost:3000/logout",
                         type: "GET",
                         xhrFields: {
                             withCredentials: true
@@ -153,7 +198,7 @@
 
                     });
                     request.done(function(msg) {
-                        //window.location = "interview_platform.html";
+                        window.location = "interview_platform.html";
                     });
 
                     request.fail(function(jqXHR, textStatus) {
@@ -186,7 +231,7 @@
             var data = table.rows[rowId].cells[1].innerHTML;
             console.log(data);
             var request = $.ajax({
-                    url: "http://192.168.0.104:3000/events/"+data,
+                    url: "http://localhost:3000/events/"+data,
                     type: "DELETE",
                     xhrFields: {
                         withCredentials: true
@@ -211,20 +256,21 @@
         <div class="well well-sm text-center" style="background-color:#163541;">
             <div><h2 style="color:white">Interview Platform - Administrator
                 <ul class="nav nav-pills" style="float:right">
-                    <li class="active"><a href="#" class="btn btn-primary">Home</a></li>
+                    <li class="active"><a href="adminProfile.html" class="btn btn-primary">Home</a></li>
                     <li class="active"><a href="#" class="btn btn-primary" id="signOut" style="float:right">Sign out</a></li>
                 </ul>
             </h2></div>
         </div>
 
-        <div class="panel panel-primary" style="margin: 0 auto; margin-top: 2%; width:90%;">
+        <div class="panel panel-primary" style="margin: 0 auto; margin-top: 2%; width:95%;">
         
         <div class="panel-body" style="background:#E8EFF7;">
            <a class="btn btn-success btn-lg" href="Create_Event.html">Add Event</a>
-            <a href="#" class="btn btn-primary btn-lg">Schedule Event</a>
-            <a href="#" class="btn btn-primary btn-lg">Past Events</a> 
+            <a href="schedule.html" class="btn btn-primary btn-lg">Schedule Event</a>
+            <a href="approveCandidates.html" class="btn btn-primary btn-lg">Candidates Approval</a>
+            <a href="pastEvents.html" class="btn btn-primary btn-lg">Past Events</a> 
             <br><br>
-            <table class="table" id="eventTable" style="width:90%" align="center">
+            <table class="table" id="eventTable">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -237,13 +283,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
-                        <td><a href="#">Column content</a></td>
-                        <td>Column content</td>
-                        <td>Column content</td>
-                        <td>Column content</td>
-                        <td><a href="#" class="btn btn-warning" onclick="editEvent(this)">Edit</span></a></td>
-                        <td><button type="button" class="btn btn-danger" onclick="getid(this)" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                        <td class="col-lg-1">1</td>
+                        <td class="col-lg-1"><a href="#">Column content</a></td>
+                        <td class="col-lg-3">Column content</td>
+                        <td class="col-lg-1">Column content</td>
+                        <td class="col-lg-1">Column content</td>
+                        <td class="col-lg-1"><a href="#" class="btn btn-warning" onclick="editEvent(this)">Edit</span></a></td>
+                        <td class="col-lg-1"><button type="button" class="btn btn-danger" onclick="getid(this)" data-toggle="modal" data-target="#deleteModal">Delete</button>
                         </td>
                     </tr>
                 </tbody>

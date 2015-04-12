@@ -14,7 +14,7 @@
                 });
                 request.done(function(msg) {
                     if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
-                        window.location = "error.html";
+                        window.location = "userProfile.html";
                     } else if (msg['role'] == "admin") {
                     }
                 });
@@ -56,12 +56,12 @@
             }</script>
         <script type="text/javascript">
             function cancleEvent() {
-                window.location = "userProfile.html";
+                window.location = "adminProfile.html";
             }
         </script>
         <script type="text/javascript">
             function submitValue() {
-                window.location = "userProfile.html";
+                window.location = "adminProfile.html";
             }
         </script>
         <script >
@@ -104,7 +104,7 @@
                         data: JSON.stringify({
                             'name': $('#inputEventName').val(),
                             'criteria': JSON.stringify(data),
-                            'details': {'Starting Date': $('#inputStartDate').val(), 'Ending Date': $('#inputEndingDate').val(), 'Pointer Criteria': $('#inputEventPointerCriteria').val(), 'Details': $('#textarea').val()}
+                            'details': {'Starting Date': $('#inputStartDate').val(), 'Ending Date': $('#inputEndingDate').val(), 'Pointer Criteria': $('#inputEventPointerCriteria').val(), 'Details': $('#inputTextarea').val()}
 
                         }),
                         dataType: 'json',
@@ -155,7 +155,7 @@
                                             <input class="form-control" type="number"   id="inputMaxVal" placeholder="Maximum Criteria Value">
                                         </div></td>
                                     <td><div class="form-group col-lg-9">
-                                            <input class="form-control" type="text"   id="inputDescription" placeholder="Event Description">
+                                            <input class="form-control" type="text"   id="inputDescription" placeholder="Criteria Description">
                                         </div></td>
                                     <td>
                                         <a href="#" class="btn btn-danger" onclick="deleteRow(this)">Delete</a>
@@ -174,17 +174,17 @@
                 <div class="form-group">
                     <label class="col-lg-2 control-label">Starting From</label>
                     <div class="col-lg-2">
-                        <input type="date" class="form-control" id="inputStartDate" max="2050-12-31" min="2000-01-01" placeholder"dd/mm/yyyy">
+                        <input type="date" class="form-control" id="inputStartDate" max="2050-12-31" min="2000-01-01" placeholder="dd/mm/yyyy">
                     </div>
                     <label class="col-lg-2 control-label">Ending Date</label>
                     <div class="col-lg-2">
-                        <input type="date" class="form-control" id="inputEndingDate" max="2050-12-31" min="2000-01-01" placeholder"dd/mm/yyyy">
+                        <input type="date" class="form-control" id="inputEndingDate" max="2050-12-31" min="2000-01-01" placeholder="dd/mm/yyyy">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="textArea" class="col-lg-2 control-label">Details</label>
+                    <label for="inputTextarea" class="col-lg-2 control-label">Details</label>
                     <div class="col-lg-9">
-                        <textarea class="form-control" rows="3" id="textArea"></textarea>
+                        <textarea class="form-control" rows="3" id="inputTextarea"></textarea>
                         <span class="help-block">A longer block of help text that breaks onto a new line and may extend beyond one line.</span>
                     </div>
                 </div>

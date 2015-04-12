@@ -3,14 +3,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="jquery.min.js"></script>
 
   <script>
     var events;
         var k = 1;
     function get_event() {
         var request = $.ajax({
-            url: "http://192.168.0.104:3000/events",
+            url: "http://localhost:3000/events",
             type: "GET",
             xhrFields: {
                 withCredentials: true
@@ -37,7 +37,7 @@
     function getCandidates() {
       var eventname = document.getElementById("eventName");
         var request = $.ajax({
-            url: "http://192.168.0.104:3000/events/"+eventname.value+"/registrations",
+            url: "http://localhost:3000/events/"+eventname.value+"/registrations",
             type: "GET",
             xhrFields: {
                 withCredentials: true
@@ -102,7 +102,7 @@
               console.log(data);
 
               var request = $.ajax({
-                  url: "http://192.168.0.104:3000/events/"+eventname.value+"/approve",
+                  url: "http://localhost:3000/events/"+eventname.value+"/approve",
                   type: "POST",
                   dataType: 'json',
                   data: {
@@ -128,10 +128,10 @@
          
       </script>   
       <div class="well well-sm text-center" style="background-color:#173245; padding-left:8%">
-	    <div><h1 style="color:white">Interview Platform - Administrator
-	      <a href="interview_platform.html" class="btn btn-primary btn-lg" id="signOut" style="float:right">Sign Out</span></a> 
-	    </h1></div>
-	  </div>      
+      <div><h1 style="color:white">Interview Platform - Administrator
+        <a href="interview_platform.html" class="btn btn-primary btn-lg" id="signOut" style="float:right">Sign Out</span></a> 
+      </h1></div>
+    </div>      
 
       <div class="panel panel-primary" style="margin: 0 auto; margin-top: 2%; width:60%;">
           

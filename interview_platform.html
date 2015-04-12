@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +7,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="jquery.min.js"></script>
     <meta name="description" content="">
     <meta name="author" content="">
 
@@ -33,10 +35,8 @@
 <body>
   <script>
     function signIn(){
-      console.log($("#inputEmail").val());
-      console.log($("#inputPassword").val());
       var request = $.ajax({
-                    url: "http://192.168.0.103:3000/login",
+                    url: "http://localhost:3000/login",
                     type: "POST",
                     data: {
                         email: $("#inputEmail").val(),
@@ -60,7 +60,7 @@
 
     function Auth() {
      var request = $.ajax({
-                    url: "http://192.168.0.103:3000/session",
+                    url: "http://localhost:3000/session",
                     type: "GET",
                     xhrFields: {
                            withCredentials: true
@@ -68,12 +68,10 @@
                     
                 });
                 request.done(function(msg) {
-                  var data1 = JSON.parse(msg);
-                  alert(data1.role);
-                  if (data1.role == "Interviewer" || data1.role== "Interviewee") {
-                      window.location = "profilepage.html";
-                  } else if(data1.role == "admin") {
-                      window.location = "profile_Admin.html";
+                  if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                      window.location = "userProfile.html";
+                  } else if(msg['role'] == "admin") {
+                      window.location = "adminProfile.html";
                   } 
           //window.location = "profilepage.html";
                 });
@@ -87,7 +85,7 @@
 
     <!-- Header -->
     <div class="intro-header">
-       <h3 data-toggle="modal" data-target="#aboutModal" align="right" style="color:white; padding-right: 10%">About</h3>
+       <a><h3 data-toggle="modal" data-target="#aboutModal" align="right" style="color:black; padding-right: 10%">About</h3></a>
 
         <div class="container">
 
@@ -98,7 +96,7 @@
                         <div class="container" style="width:25%">
                           <br>
                           <form class="form-signin">
-                            <h2 class="form-signin-heading">Please sign in</h2>
+                            <h2 class="form-signin-heading" style="color:black">Please sign in</h2>
                             <label for="inputEmail" class="sr-only">Email address</label>
                             <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
                             <label for="inputPassword" class="sr-only">Password</label>
@@ -108,7 +106,7 @@
                                 <input type="checkbox" value="remember-me"> Remember me
                               </label>
                             </div>
-                            <button class="btn btn-lg btn-primary btn-block" type="submit" onClick="signIn()">Sign in</button>
+                            <button class="btn btn-lg btn-primary btn-block" type="button" onClick="signIn()">Sign in</button>
                           </form>
 
                         </div> <!-- /container -->
@@ -129,17 +127,17 @@
 
     </div>
     <!-- /.intro-header -->
-<div class="modal fade" id="aboutModal">
-  <div class="modal-dialog" style="padding-top: 5%; width:60%">
+<div class="modal" id="aboutModal">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h4 class="modal-title" align ="center">Interview  Platform</h4>
       </div>
       <div class="modal-body">
-        <p style="font-family:arial; font-size:17px; text-align:justify">As we all know, it’s competition out there and interview is the most crucial and challenging part of placement process. In this job market actually landing the interview can be even more challenging. We have seen that many candidates who sit for placements for the first time get nervous when they face the interviewer and cannot express themselves. The performance could be enhanced if the candidates overcome their fears and anxieties.
+        <p style="font-family:verdana; font-size:100%; text-align:justify">As we all know, it’s competition out there and interview is the most crucial and challenging part of placement process. In this job market actually landing the interview can be even more challenging. We have seen that many candidates who sit for placements for the first time get nervous when they face the interviewer and cannot express themselves. The performance could be enhanced if the candidates overcome their fears and anxieties.
         </p>
-        <p style="font-family:arial; font-size:17px; text-align:justify">
+        <p style="font-family:verdana; font-size:100%; text-align:justify">
           The main aim of the system will be to give candidate the atmosphere of an interview. This system will reduce the nervousness and anxiety faced by candidates because of which they are not able to give their best while facing interviews. The platform will help the candidates realize their strengths and weaknesses and help them come out with their skills and capabilities in an efficient manner.
         </p>
       </div>
@@ -149,20 +147,19 @@
 </div>
 
     <!-- Page Content -->
-<div class="modal fade" id="signupModal" >
-  <div class="modal-dialog" style="padding-top: 5%; width:40%">
+<div class="modal" id="signupModal" >
+  <div class="modal-dialog" style="padding-top: 5%; width:30%">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h4 class="modal-title" align ="center">Sign Up</h4>
       </div>
-      <br>
       <div class="modal-body"  align="center">
-        <a href="sign_up_interviewee.html" class="btn btn-success btn-lg" style="font-size:30px">As an Interviewee</a>
-        <br><br><br>
-        <a href="sign_up.html" class="btn btn-danger btn-lg" style="font-size:30px">As an Interviewer</a>
-        <br><br><br>
+        <a href="sign_up_interviewee.html" class="btn btn-success btn-lg">As an Interviewee</a>
+        <br></br>
+        <a href="sign_up.html" class="btn btn-danger btn-lg">As an Interviewer</a>
       </div>
+
             
     </div>
   </div>
@@ -170,10 +167,6 @@
 
 
 <!-- Modal -->
-
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
 
