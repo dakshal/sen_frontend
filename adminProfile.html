@@ -5,7 +5,7 @@
         <title>Admin</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="bootstrap.min.css">
+        <link rel="stylesheet" href="vedcss/bootstrap.min.css">
         <script src="jquery.min.js"></script>
 
 
@@ -15,7 +15,7 @@
             var eventLength;
             function get_event() {
                 var request = $.ajax({
-                    url: "http://192.168.0.104:3000/events",
+                    url: "http://localhost:3000/events",
                     type: "GET",
                     xhrFields: {
                         withCredentials: true
@@ -90,7 +90,7 @@
         <script >
             function Auth() {
                 var request = $.ajax({
-                    url: "http://192.168.0.104:3000/session",
+                    url: "http://localhost:3000/session",
                     type: "GET",
                     xhrFields: {
                         withCredentials: true
@@ -114,7 +114,7 @@
         <script>
 
             function getEventData(eventName) {
-                var link = "http://192.168.0.104:3000/events/";
+                var link = "http://localhost:3000/events/";
                 link = link.concat(eventName);
                 console.log(link);
                 var request = $.ajax({
@@ -145,7 +145,7 @@
             $(document).ready(function() {
                 $("#signOut").click(function() {
                     var request = $.ajax({
-                        url: "http://192.168.0.104:3000/logout",
+                        url: "http://localhost:3000/logout",
                         type: "GET",
                         xhrFields: {
                             withCredentials: true
@@ -186,7 +186,7 @@
             var data = table.rows[rowId].cells[1].innerHTML;
             console.log(data);
             var request = $.ajax({
-                    url: "http://192.168.0.104:3000/events/"+data,
+                    url: "http://localhost:3000/events/"+data,
                     type: "DELETE",
                     xhrFields: {
                         withCredentials: true
