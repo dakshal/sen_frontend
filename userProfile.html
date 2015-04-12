@@ -21,7 +21,7 @@
     <script >
             function Auth() {
                 var request = $.ajax({
-                    url: "http://192.168.0.101:3000/session",
+                    url: "http://localhost:3000/session",
                     type: "GET",
                     xhrFields: {
                         withCredentials: true
@@ -60,7 +60,7 @@
         var eid = encodeURIComponent(email);
         console.log(eid);
                 var request = $.ajax({
-                    url: "http://192.168.0.101:3000/users/"+eid+"/events/notregistered",
+                    url: "http://localhost:3000/users/"+eid+"/events/notregistered",
                     type: "GET",
                     xhrFields: {
                         withCredentials: true
@@ -124,7 +124,7 @@
         <script>
 
         function getEventData(eventName){
-          var link = "http://192.168.0.101:3000/events/";
+          var link = "http://localhost:3000/events/";
           link = link.concat(eventName);
           //console.log(link);
           var request = $.ajax({
@@ -144,29 +144,7 @@
         }
     </script>
 <script>
-   $(document).ready(function () {
-  $( "#signOut" ).click(function() {
-            var request = $.ajax({
-                    url: "http://192.168.0.101:3000/logout",
-                    type: "GET",
-                    xhrFields: {
-                           withCredentials: true
-                       }
-                    
-                });
-                request.done(function(msg) {
-                  // $('#name').val(msg1['name']);
-                  // $('#email').val(msg1['email']);
-                  // $('#role').val(msg1['role']);
-                                  
-                //window.location = "interview_platform.html";
-               });
-
-                request.fail(function(jqXHR, textStatus) {
-                    alert("Invalid email or password.");
-                });
-              });
-});
+  
 </script>
 <script>
     function regEvent (r) {
@@ -177,7 +155,7 @@
       console.log(data);
       
       var request = $.ajax({
-            url: "http://192.168.0.101:3000/events/"+data+"/register",
+            url: "http://localhost:3000/events/"+data+"/register",
             type: "POST",
             data: {
                                
@@ -197,6 +175,26 @@
             alert("Invalid email or password.");
         });
     }      
+
+    $(document).ready(function() {
+        $("#signOut").click(function() {
+            var request = $.ajax({
+                url: "http://localhost:3000/logout",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+
+            });
+            request.done(function(msg) {
+                window.location = "interview_platform.html";
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                alert("Invalid email or password.");
+            });
+        });
+    });
 </script>
 
 <body>
