@@ -1,0 +1,321 @@
+<html>
+
+<head>
+    <title>text editor</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+
+    <script>
+        function Auth() {
+                var request = $.ajax({
+                    url: "http://localhost:3000/session",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+
+                });
+                request.done(function(msg) {
+                    if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                        checkTimeStamp(msg.email);
+                    } else if (msg['role'] == "admin") {
+                        window.location = "adminProfile.html";
+                    }
+                    //window.location = "profilepage.html";
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    window.location = "interview_platform.html";
+                    // alert("Unable to Authenticate");
+                });
+            }
+            // window.onpaint = Auth();
+
+        function checkTimeStamp(sessionId) {
+            var currentTime;
+            var request = $.ajax({
+                url: "http://localhost:3000/time",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                console.log(msg);
+                currentTime = new Date(msg['current_time']).getTime();
+                console.log(currentTime);
+            });
+            request.fail(function(jqXHR, textStatus) {
+                console.log("time not found");
+            });
+            var ongoingTable = document.getElementById("ongoingTable");
+            var request = $.ajax({
+                url: "http://localhost:3000/users/" + sessionId + "/interviews",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                console.log(msg);
+                var currEvent = false;
+                for (var i = 0; i < msg.length; i++) {
+                    var eventTime = new Date(msg.time).getTime();
+                    if (eventTime - currentTime < 900000 || currentTime - eventTime < 900000) {
+                        currEvent = true;
+                    }
+                }
+                // if(!currEvent){
+                //   window.location = "userProfile.html";
+                // }
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                alert("session failed for setOngoing");
+
+            });
+        }
+    </script>
+    <script>
+        function getID(sessionId, role) {
+            console.log(sessionId);
+            var emailIdtemp = "http://localhost:3000/users/" + sessionId + "/interviews";
+            console.log(emailIdtemp);
+            var request = $.ajax({
+                url: emailIdtemp,
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                // var currentTime = getCurrentTime();
+                //for(var i=0;i<msg.length;i++){
+                //if(msg[i].time<currentTime){
+                var eventId = msg[0].id;
+                var eventName = msg[0].event;
+                console.log(msg);
+                // console.log(eventName);
+                sendRequest(eventId, eventName, role);
+                //}
+                //}
+            });
+
+            request.fail(function(msg) {
+
+            });
+        }
+    </script>
+
+
+    <script>
+        function interviewEnd() {
+            console.log("hi");
+            var sessionId = '';
+            var request = $.ajax({
+                url: "http://localhost:3000/session",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                console.log(msg.email);
+                sessionId = msg.email;
+                var role = msg.role;
+                getID(sessionId, role);
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                alert("session failed");
+
+            });
+        }
+    </script>
+
+    <script>
+        function compile() {
+            var padId = 'examplePadIntense'; //Id of the div in which etherpad lite is integrated
+            var epframeId = 'epframe' + padId;
+            var frameUrl = $('#' + epframeId).attr('src').split('?')[0];
+            var contentsUrl = frameUrl + "/export/txt";
+            console.log(contentsUrl);
+            var code = '';
+            jQuery.get(contentsUrl, function(data1) {
+                data1;
+                console.log(data1);
+                var request = $.ajax({
+                    url: "http://localhost:3000/compile",
+                    type: "POST",
+                    data: {
+                        'source': data1,
+                        'input': $('#input').val()
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    }
+
+                });
+                request.done(function(msg) {
+                    console.log(msg);
+                    console.log(msg['error']);
+                    if (msg.cmpinfo == "") {
+                        if (msg['error'].indexOf("OK") > -1) {
+                            console.log("successful", msg['output']);
+                            document.getElementById('output').innerHTML = msg['output'];
+                        }
+                    } else {
+                        document.getElementById('output').innerHTML = msg['cmpinfo'];
+                    }
+
+                    //window.location = "profilepage.html";
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    // alert("Unable to Authenticate");
+                });
+            });
+
+
+        }
+    </script>
+    <script>
+        function sendRequest(eventId, eventName, role) {
+            var emai = "http://localhost:3000/events/" + eventName + "/interviews/" + eventId + "/end";
+            console.log(emai);
+            if (role == "Interviewer") {
+                window.location = "rating.html";
+            } else {
+                var request = $.ajax({
+                    url: "http://localhost:3000/events/" + eventName + "/interviews/" + eventId + "/end",
+                    type: "POST",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    console.log(msg);
+                    window.location = "userProfile.html";
+                });
+                request.fail(function(jqXHR, textStatus) {
+                    console.log("Interview still open");
+                    window.location = "userProfile.html";
+
+                });
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+    <div>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                        <span class="sr-only">Toggle navigation</span>
+                    </button>
+                    <a class="navbar-brand" href="#"></a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><font size="6px">INTERVIEW SCREEN</font></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" style="padding-top:0.65%">
+                        <button type="button" onclick="interviewEnd()" class="btn btn-danger" id="endInterview"><font color="white">End Interview</font></a>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6" style="height:80%">
+                <script src="webrtc.js"></script>
+                <script>
+                    var request = $.ajax({
+                        url: "http://localhost:3000/session",
+                        type: "GET",
+                        xhrFields: {
+                            withCredentials: true
+                        }
+
+                    });
+                    request.done(function(msg) {
+                        var curr_inter = msg['current_interview'];
+                        var videoId = "events-" + curr_inter['event_name'] + "-interviews-" + curr_inter['id'];
+                        var webrtc = new SimpleWebRTC({
+                            // the id/element dom element that will hold "our" video
+                            localVideoEl: 'localVideo',
+                            // the id/element dom element that will hold remote videos
+                            remoteVideosEl: 'remotesVideos',
+                            // immediately ask for camera access
+                            autoRequestMedia: true,
+                            url: 'http://10.100.96.74:8888'
+                        });
+
+                        webrtc.on('readyToCall', function() {
+                            // you can name it anything
+                            webrtc.joinRoom(videoId);
+                        });
+                    });
+                </script>
+                <div width="480" height="320" id="remotesVideos"></div>
+
+                <video id="localVideo" width="150" height="100" style="position:absolute; left:85%; top:0%"></video>
+
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-5">
+                <form name="js1">
+                    <label style="padding-top:5%"><font size="5px">Code</font></label>
+                    <script src="js/etherpad.js"></script>
+                    <div id="examplePadIntense"></div>
+                    <script type="text/javascript">
+                        var request = $.ajax({
+                            url: "http://localhost:3000/session",
+                            type: "GET",
+                            xhrFields: {
+                                withCredentials: true
+                            }
+
+                        });
+                        request.done(function(msg) {
+                            var curr_inter = msg['current_interview'];
+                            var padId = "events-" + curr_inter['event_name'] + "-interviews-" + curr_inter['id'];
+                            $('#examplePadIntense').pad({
+                                'padId': padId,
+                                'showChat': 'true',
+                                'width': 100,
+                                'height': 300,
+                                'userName': msg.details.name
+                            }); // sets the pad id and puts the pad in the div                                
+                        });
+                    </script>
+                    <hr>
+                    <input type="button" class="btn btn-primary" id="CandR" onclick="compile()" value="Compile and Run">
+
+                    <hr>
+                    <div class="col-md-6">
+                        <font size="5px"><b>Input:</b></font>
+                        <textarea class="form-control col-md-10" rows="3" id="input"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <font size="5px"><b>Output:</b></font>
+                        <div id="output" height="50px"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
