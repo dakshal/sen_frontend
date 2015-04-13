@@ -5,14 +5,14 @@
         <title>Past Events</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="vedcss/bootstrap.min.css">
+        <link rel="stylesheet" href="bootstrap.min.css">
         <script src="jquery.min.js"></script>
 
 
         <script type="text/javascript">
             function Auth() {
                 var request = $.ajax({
-                    url: "http://localhost:3000/session",
+                    url: "http://192.168.0.105:3000/session",
                     type: "GET",
                     xhrFields: {
                         withCredentials: true
@@ -27,7 +27,7 @@
                 });
 
                 request.fail(function(jqXHR, textStatus) {
-                    window.location = "interview_platform.html";
+                    //window.location = "interview_platform.html";
                 });
             }
             window.onpaint = Auth();
@@ -38,7 +38,7 @@
             function get_event() {
             var currentTime;
               var request = $.ajax({
-                url: "http://localhost:3000/time",
+                url: "http://192.168.0.105:3000/time",
                 type: "GET",
                 xhrFields: {
                   withCredentials: true
@@ -53,7 +53,7 @@
                 console.log("time not found");
               });
                 var request = $.ajax({
-                    url: "http://localhost:3000/events",
+                    url: "http://192.168.0.105:3000/events",
                     type: "GET",
                     xhrFields: {
                         withCredentials: true
@@ -127,34 +127,12 @@
                     alert("Atleast one criteria required");
                 }
             }</script>
-        <script >
-            function Auth() {
-                var request = $.ajax({
-                    url: "http://localhost:3000/session",
-                    type: "GET",
-                    xhrFields: {
-                        withCredentials: true
-                    }
-
-                });
-                request.done(function(msg) {
-                    if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
-                        window.location = "userProfile.html";
-                    } else if (msg['role'] == "admin") {
-                    }
-                    window.location = "profilepage.html";
-                });
-
-                request.fail(function(jqXHR, textStatus) {
-                    alert("Unable to Authenticate");
-                });
-            }
-        </script>
+       
 
         <script>
        
             function getEventData(eventName, currentTime) {
-                var link = "http://localhost:3000/events/";
+                var link = "http://192.168.0.105:3000/events/";
                 link = link.concat(eventName);
                 console.log(link);
                 var request = $.ajax({
@@ -190,7 +168,7 @@
             $(document).ready(function() {
                 $("#signOut").click(function() {
                     var request = $.ajax({
-                        url: "http://localhost:3000/logout",
+                        url: "http://192.168.0.105:3000/logout",
                         type: "GET",
                         xhrFields: {
                             withCredentials: true
@@ -198,7 +176,7 @@
 
                     });
                     request.done(function(msg) {
-                        window.location = "interview_platform.html";
+                        //window.location = "interview_platform.html";
                     });
 
                     request.fail(function(jqXHR, textStatus) {
@@ -231,7 +209,7 @@
             var data = table.rows[rowId].cells[1].innerHTML;
             console.log(data);
             var request = $.ajax({
-                    url: "http://localhost:3000/events/"+data,
+                    url: "http://192.168.0.105:3000/events/"+data,
                     type: "DELETE",
                     xhrFields: {
                         withCredentials: true
@@ -253,34 +231,54 @@
     </head>
 
     <body>
-        <div class="well well-sm text-center" style="background-color:#163541;">
-            <div><h2 style="color:white">Interview Platform - Administrator
-                <ul class="nav nav-pills" style="float:right">
-                    <li class="active"><a href="adminProfile.html" class="btn btn-primary">Home</a></li>
-                    <li class="active"><a href="#" class="btn btn-primary" id="signOut" style="float:right">Sign out</a></li>
-                </ul>
-            </h2></div>
-        </div>
+        <div class="well well-sm text-center" style="background-color:#173245; padding-left:8%">
+      <div><h1 style="color:white">Interview Platform - Administrator
+        <a href="interview_platform.html" class="btn btn-primary btn-lg" id="signOut" style="float:right">Sign Out</span></a> 
+      </h1></div>
+    </div>  
 
-        <div class="panel panel-primary" style="margin: 0 auto; margin-top: 2%; width:95%;">
-        
+    <div class="container col-md-12" style="padding-top:2%; padding-left:2%; padding-right:5%">
+      <div class="row">
+      <div class="col-md-2">
+        <ul class="nav nav-list nav-stacked">
+          <li class="nav-header" style="font-size:20px"><b>Quick Links</b></li>
+          <li>
+            <a href="adminProfile.html">Profile</a>
+          </li>
+          <li><a href="pastEvents.html">Event History </a>
+          </li>
+          <li><a href="Create_Event.html">Create Event</a>
+          </li>
+          
+          <li><a href="schedule.html">Schedule Interview</a>
+          </li>
+          <li><a href="changePassword_admin.html">Change Password </a>
+          </li>
+        </ul>
+    </div>
+
+
+        <div class="panel panel-primary" style="margin: 0 auto; width:80%; float:left">
+        <div class="panel-heading" >
+          <div class="panel-title text-center"><h3>Past Events</h3></div>
+        </div>        
         <div class="panel-body" style="background:#E8EFF7;">
            <br><br>
-            <table class="table" id="eventTable">
+            <table class="table text-center" id="eventTable">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Event Name</th>
-                        <th>Event Description</th>
-                        <th>Start date</th>
-                        <th>End Date</th>
-                        <th></th>
+                        <th class=" text-center">#</th>
+                        <th class=" text-center">Event Name</th>
+                        <th class=" text-center">Event Description</th>
+                        <th class=" text-center">Start date</th>
+                        <th class=" text-center">End Date</th>
+                        <th class=" text-center"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td class="col-lg-1">1</td>
-                        <td class="col-lg-1"><a href="#">Column content</a></td>
+                        <td class="col-lg-1">Column content</td>
                         <td class="col-lg-3">Column content</td>
                         <td class="col-lg-1">Column content</td>
                         <td class="col-lg-1">Column content</td>

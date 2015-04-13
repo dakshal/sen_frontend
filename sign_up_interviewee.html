@@ -9,7 +9,7 @@
       <script>
           function signUp(){
             var request = $.ajax({
-                          url: "http://192.168.0.101:3000/users",
+                          url: "http://localhost:3000/users",
                           type: "PUT",
                           data: {
                               name: $("#inputName").val,
@@ -55,14 +55,10 @@
 
                 <div class="col-lg-8">
                   <input class="form-control" id="inputEmail" placeholder="Email" type="text">
+                  <span class="help-block">We'll send you an email along with a password. Please sign in with the given password and change it later.</span>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="inputPassword" class="col-lg-3 control-label">Password</label>
-                <div class="col-lg-8">
-                  <input class="form-control" id="inputPassword" placeholder="Password" type="password">                
-                </div>
-              </div>
+              
               
               <div class="form-group">
                 <div class="col-lg-10 col-lg-offset-3">

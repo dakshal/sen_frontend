@@ -1,0 +1,212 @@
+<head>
+<title>Event History</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+  <script type="text/javascript">
+        function Auth() {
+            var request = $.ajax({
+                url: "http://localhost:3000/session",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                    get_event();
+                } else if (msg['role'] == "admin") {
+                    window.location = "error.html";
+                }
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                //window.location = "interview_platform.html";
+            });
+        }
+        window.onpaint = Auth();
+    </script>
+    <script>
+        var eventNames;
+        var eventLength;
+        function get_event() {
+        var currentTime;
+          var request = $.ajax({
+            url: "http://localhost:3000/time",
+            type: "GET",
+            xhrFields: {
+              withCredentials: true
+            }
+          });
+          request.done(function(msg) {
+            console.log(msg);
+            currentTime = new Date(msg['current_time']).getTime();
+            console.log(currentTime);
+          });
+          request.fail(function(jqXHR, textStatus) {
+            console.log("time not found");
+          });
+            var request = $.ajax({
+                url: "http://localhost:3000/events",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                eventNames = msg;
+                for (var i = 0; i < eventNames.length; i++) {
+                    console.log(eventNames[i]);
+                    console.log(currentTime);
+                    getEventData(eventNames[i], currentTime);
+                }
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                alert(" ");
+                // window.location = "interview_platform.html";
+            });
+        }
+        // window.onpaint = get_event();
+
+
+    </script>
+    <script language="javascript">
+      function setEventData(tableID, eventDetails, row, j) {
+            console.log(eventDetails);
+            var table = document.getElementById(tableID);
+            table.rows[j].cells[0].innerHTML = j;
+            table.rows[j].cells[1].innerHTML = eventDetails['name'];
+            var xyz = eventDetails['details'];
+            table.rows[j].cells[2].innerHTML = xyz['Starting Date'];
+            table.rows[j].cells[3].innerHTML = xyz['Ending Date'];
+            table.rows[j].cells[4].innerHTML = table.rows[1].cells[4].innerHTML;
+        }
+    </script>
+    <script language="javascript">
+        var k = 1;
+        function addRow(tableID, eventDetails) {
+            var table = document.getElementById(tableID);
+            var rowCount = table.rows.length;
+            if (k > 1) {
+                var row = table.insertRow(rowCount);
+                var colCount = table.rows[1].cells.length;
+                for (var i = 0; i < colCount; i++) {
+                    var newcell = row.insertCell(i);
+                    newcell.innerHTML = table.rows[1].cells[i].innerHTML;
+                }
+            }
+            setEventData(tableID, eventDetails, row, k++);
+        }
+        </script>
+   
+
+    <script>
+   
+        function getEventData(eventName, currentTime) {
+            var link = "http://localhost:3000/events/";
+            link = link.concat(eventName);
+            console.log(link);
+            var request = $.ajax({
+                url: link,
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                var xyz = msg['details'];
+                var date = xyz['Ending Date'];
+                console.log(currentTime);
+                if(new Date(date).getTime()<currentTime){
+                    addRow('eventTable', msg);
+                }
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+            });
+        }
+
+        $(document).ready(function() {
+            $("#signOut").click(function() {
+                var request = $.ajax({
+                    url: "http://localhost:3000/logout",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+
+                });
+                request.done(function(msg) {
+                    window.`tion = "interview_platform.html";
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    alert("Invalid email or password.");
+                });
+            });
+        });
+        
+    </script>
+
+</head>
+    <body >
+      <script>
+         
+      </script>   
+      <div class="well well-sm text-center" style="background-color:#173245; padding-left:8%">
+	    <div><h1 style="color:white">Interview Platform
+	      <a href="interview_platform.html" class="btn btn-primary btn-lg" id="signOut" style="float:right">Sign Out</span></a> 
+	    </h1></div>
+	  </div>      
+
+    <div class="container col-md-12" style="padding-top:2%; padding-left:5%; padding-right:5%">
+      <div class="row">
+      <div class="col-md-2">
+        <ul class="nav nav-list nav-stacked">
+          <li class="nav-header" style="font-size:20px"><b>Quick Links</b></li>
+          <li>
+            <a href="userProfile.html">Profile</a>
+          </li>
+          <li><a href="pastEvents.html">Event History </a>
+          </li>
+          <li><a href="regEvents.html">Registered Events </a>
+          </li>
+          <li><a href="changePassword.html">Change Password </a>
+          </li>
+        </ul>
+    </div>
+    
+      <div class="panel panel-primary" style="margin: 0 auto; width:80%;  float:right">
+        <div class="panel-heading" >
+          <div class="panel-title text-center"><h4>Past Events</h4></div>
+        </div>          
+          <div class="panel-body" style="background:#E8EFF7;">
+            
+          <table class="table table-striped text-center" id="eventTable" style="width:90%" align="center">
+                <thead>
+                    <tr>
+                        <th class="col-lg-1 text-center"></th>
+                        <th class="col-lg-3 text-center">Event Name</th>
+                        <th class="col-lg-3 text-center">Start Date</th>
+                        <th class="col-lg-3 text-center">End Date</th>
+                        <th ></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><a href="#" class="btn btn-primary" onclick="editEvent(this)">View results</span></a></td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+      </div>     
+    </body>
+</html>
