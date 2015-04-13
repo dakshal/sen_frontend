@@ -10,7 +10,7 @@
         var k = 1;
     function get_event() {
         var request = $.ajax({
-            url: "http://localhost:3000/events",
+            url: "http://192.168.0.105:3000/events",
             type: "GET",
             xhrFields: {
                 withCredentials: true
@@ -37,7 +37,7 @@
     function getCandidates() {
       var eventname = document.getElementById("eventName");
         var request = $.ajax({
-            url: "http://localhost:3000/events/"+eventname.value+"/registrations",
+            url: "http://192.168.0.105:3000/events/"+eventname.value+"/registrations",
             type: "GET",
             xhrFields: {
                 withCredentials: true
@@ -102,7 +102,7 @@
               console.log(data);
 
               var request = $.ajax({
-                  url: "http://localhost:3000/events/"+eventname.value+"/approve",
+                  url: "http://192.168.0.105:3000/events/"+eventname.value+"/approve",
                   type: "POST",
                   dataType: 'json',
                   data: {
@@ -133,7 +133,26 @@
       </h1></div>
     </div>      
 
-      <div class="panel panel-primary" style="margin: 0 auto; margin-top: 2%; width:60%;">
+    <div class="container col-md-12" style="padding-top:2%; padding-left:2%; padding-right:5%">
+      <div class="row">
+      <div class="col-md-2">
+        <ul class="nav nav-list nav-stacked">
+          <li class="nav-header" style="font-size:20px"><b>Quick Links</b></li>
+          <li>
+            <a href="adminProfile.html">Profile</a>
+          </li>
+          <li><a href="pastEvents.html">Event History </a>
+          </li>
+          <li><a href="Create_Event.html">Create Event</a>
+          </li>
+          
+          <li><a href="schedule.html">Schedule Inteview</a>
+          </li>
+          <li><a href="changePassword_admin.html">Change Password </a>
+          </li>
+        </ul>
+    </div>
+      <div class="panel panel-primary" style="margin: 0 auto; width:60%; float:center">
           
           <div class="panel-body" style="background:#E8EFF7;">
             <legend class="text-center">
