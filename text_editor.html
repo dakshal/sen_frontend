@@ -215,27 +215,15 @@
 </head>
 
 <body>
-    <div>
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
-                        <span class="sr-only">Toggle navigation</span>
-                    </button>
-                    <a class="navbar-brand" href="#"></a>
-                </div>
 
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
-                    <ul class="nav navbar-nav">
-                        <li class="active"><font size="6px">INTERVIEW SCREEN</font></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right" style="padding-top:0.65%">
-                        <button type="button" onclick="interviewEnd()" class="btn btn-danger" id="endInterview"><font color="white">End Interview</font></a>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+    <div class="well well-sm text-center" style="background-color:#173245;  padding-left:8%">
+        <div>
+            <h1 style="color:white">Interview Screen
+      <a type="button" onclick="interviewEnd()" class="btn btn-danger" style=" float:right" id="endInterview">End Interview</span></a> 
+    </h1></div>
     </div>
+
+    
     <div class="container">
         <div class="row">
             <div class="col-md-6" style="height:80%">
@@ -274,7 +262,7 @@
 
             </div>
             <div class="col-md-1"></div>
-            <div class="col-md-5">
+            <div class="col-lg-5">
                 <form name="js1">
                     <label style="padding-top:5%"><font size="5px">Code</font></label>
                     <script src="js/etherpad.js"></script>
@@ -304,11 +292,12 @@
                     <input type="button" class="btn btn-primary" id="CandR" onclick="compile()" value="Compile and Run">
 
                     <hr>
-                    <div class="col-md-6">
+                    <div class="col-lg-12">
                         <font size="5px"><b>Input:</b></font>
-                        <textarea class="form-control col-md-10" rows="3" id="input"></textarea>
+                        <textarea class="form-control col-md-12" rows="5" id="input"></textarea>
                     </div>
-                    <div class="col-md-6">
+                    
+                    <div class="col-lg-12" style="padding-top:4%">
                         <font size="5px"><b>Output:</b></font>
                         <div id="output" height="50px"></div>
                     </div>
