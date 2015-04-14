@@ -21,7 +21,7 @@
 
     <!-- Custom Fonts -->
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <!-- <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css"> -->
+    <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -35,9 +35,8 @@
 <body>
   <script>
     function signIn(){
-      var location = window.location.href.split('/')[2];
       var request = $.ajax({
-                    url: "http://"+location+":3000/login",
+                    url: "http://localhost:3000/login",
                     type: "POST",
                     data: {
                         email: $("#inputEmail").val(),
@@ -60,9 +59,8 @@
     }
 
     function Auth() {
-     var location = window.location.href.split('/')[2];
      var request = $.ajax({
-                    url: "http://"+location+":3000/session",
+                    url: "http://localhost:3000/session",
                     type: "GET",
                     xhrFields: {
                            withCredentials: true

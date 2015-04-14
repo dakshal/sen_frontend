@@ -1,166 +1,232 @@
-<head>
-<title>Event History</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!DOCTYPE html>
 
-  <script type="text/javascript">
-        function Auth() {
-            var request = $.ajax({
-                url: "http://localhost:3000/session",
-                type: "GET",
-                xhrFields: {
-                    withCredentials: true
-                }
-            });
-            request.done(function(msg) {
-                if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
-                    get_event();
-                } else if (msg['role'] == "admin") {
-                    window.location = "error.html";
-                }
-            });
-
-            request.fail(function(jqXHR, textStatus) {
-                //window.location = "interview_platform.html";
-            });
-        }
-        window.onpaint = Auth();
-    </script>
-    <script>
-        var eventNames;
-        var eventLength;
-        function get_event() {
-        var currentTime;
-          var request = $.ajax({
-            url: "http://localhost:3000/time",
-            type: "GET",
-            xhrFields: {
-              withCredentials: true
-            }
-          });
-          request.done(function(msg) {
-            console.log(msg);
-            currentTime = new Date(msg['current_time']).getTime();
-            console.log(currentTime);
-          });
-          request.fail(function(jqXHR, textStatus) {
-            console.log("time not found");
-          });
-            var request = $.ajax({
-                url: "http://localhost:3000/events",
-                type: "GET",
-                xhrFields: {
-                    withCredentials: true
-                }
-            });
-            request.done(function(msg) {
-                eventNames = msg;
-                for (var i = 0; i < eventNames.length; i++) {
-                    console.log(eventNames[i]);
-                    console.log(currentTime);
-                    getEventData(eventNames[i], currentTime);
-                }
-            });
-
-            request.fail(function(jqXHR, textStatus) {
-                alert(" ");
-                // window.location = "interview_platform.html";
-            });
-        }
-        // window.onpaint = get_event();
+<html>
+    <head>
+        <title>Past Events</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="bootstrap.min.css">
+        <script src="jquery.min.js"></script>
 
 
-    </script>
-    <script language="javascript">
-      function setEventData(tableID, eventDetails, row, j) {
-            console.log(eventDetails);
-            var table = document.getElementById(tableID);
-            table.rows[j].cells[0].innerHTML = j;
-            table.rows[j].cells[1].innerHTML = eventDetails['name'];
-            var xyz = eventDetails['details'];
-            table.rows[j].cells[2].innerHTML = xyz['Starting Date'];
-            table.rows[j].cells[3].innerHTML = xyz['Ending Date'];
-            table.rows[j].cells[4].innerHTML = table.rows[1].cells[4].innerHTML;
-        }
-    </script>
-    <script language="javascript">
-        var k = 1;
-        function addRow(tableID, eventDetails) {
-            var table = document.getElementById(tableID);
-            var rowCount = table.rows.length;
-            if (k > 1) {
-                var row = table.insertRow(rowCount);
-                var colCount = table.rows[1].cells.length;
-                for (var i = 0; i < colCount; i++) {
-                    var newcell = row.insertCell(i);
-                    newcell.innerHTML = table.rows[1].cells[i].innerHTML;
-                }
-            }
-            setEventData(tableID, eventDetails, row, k++);
-        }
-        </script>
-   
-
-    <script>
-   
-        function getEventData(eventName, currentTime) {
-            var link = "http://localhost:3000/events/";
-            link = link.concat(eventName);
-            console.log(link);
-            var request = $.ajax({
-                url: link,
-                type: "GET",
-                xhrFields: {
-                    withCredentials: true
-                }
-            });
-            request.done(function(msg) {
-                var xyz = msg['details'];
-                var date = xyz['Ending Date'];
-                console.log(currentTime);
-                if(new Date(date).getTime()<currentTime){
-                    addRow('eventTable', msg);
-                }
-            });
-
-            request.fail(function(jqXHR, textStatus) {
-            });
-        }
-
-        $(document).ready(function() {
-            $("#signOut").click(function() {
+        <script type="text/javascript">
+            function Auth() {
                 var request = $.ajax({
-                    url: "http://localhost:3000/logout",
+                    url: "http://192.168.0.105:3000/session",
                     type: "GET",
                     xhrFields: {
                         withCredentials: true
                     }
-
                 });
                 request.done(function(msg) {
-                    window.`tion = "interview_platform.html";
+                    if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                        get_event(encodeURIComponent(msg.email));
+                    } else if (msg['role'] == "admin") {
+                        window.location = "adminProfile.html";
+                    }
                 });
 
                 request.fail(function(jqXHR, textStatus) {
-                    alert("Invalid email or password.");
+                    window.location = "interview_platform.html";
+                });
+            }
+            window.onpaint = Auth();
+        </script>
+        <script>
+            var eventNames;
+            var eventLength;
+            var currentTime = '';
+            var outMsg;
+            function get_event(email) {
+              var request = $.ajax({
+                url: "http://192.168.0.105:3000/time",
+                type: "GET",
+                xhrFields: {
+                  withCredentials: true
+                }
+              });
+              request.done(function(msg) {
+                console.log(msg);
+                currentTime = new Date(msg['current_time']).getTime();
+                console.log(currentTime);
+              });
+              request.fail(function(jqXHR, textStatus) {
+                console.log("time not found");
+              });
+                var request = $.ajax({
+                    url: "http://192.168.0.105:3000/users/" + email +"/interviews",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    outMsg = msg;
+                    eventNames = msg;
+                    for (var i = 0; i < eventNames.length; i++) {
+                        console.log(eventNames[i]);
+                        console.log(currentTime);
+                        getEventData(msg[i].time, currentTime, eventNames[i]);
+                    }
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    alert(" ");
+                    // window.location = "interview_platform.html";
+                });
+            }
+            // window.onpaint = get_event();
+            var rowId;
+            function getid (r) {
+                var table = document.getElementById('eventTable');
+                rowId = r.parentNode.parentNode.rowIndex;
+                console.log(outMsg[rowId-1].results);
+                var result = outMsg[rowId-1].results;
+                createTable();
+                if(result == null){
+                    var table = document.getElementById('resultTable');
+                    table.rows[1].cells[0].innerHTML = 1;
+                    table.rows[1].cells[1].innerHTML = 'No result to display';
+                    table.rows[1].cells[2].innerHTML = '';
+                }
+                else {
+                    for(var i=0; i<result.length; i++){
+                        addModalRow('resultTable', result[i]);
+                    }
+                }
+
+            
+         }
+
+
+        </script>
+        <script language="javascript">
+        function setEventData(tableID, eventDetails, row, j) {
+                console.log(eventDetails);
+                var table = document.getElementById(tableID);
+                table.rows[j].cells[0].innerHTML = j;
+                table.rows[j].cells[1].innerHTML = eventDetails['event'];
+                var xyz = eventDetails['time'];
+                var dt = xyz.substring(0, 10) + " " + xyz.substring(11, 19);
+                table.rows[j].cells[2].innerHTML = (parseInt(new Date(dt).getMonth())+1)+ "-" + new Date(dt).getDate() + "-" + new Date(dt).getFullYear();
+                table.rows[j].cells[3].innerHTML = new Date(dt).getHours() + ":" + new Date(dt).getMinutes();
+                table.rows[j].cells[4].innerHTML = table.rows[1].cells[4].innerHTML;
+            }
+
+        function setModalData(tableID, eventDetails, row, j) {
+                console.log(eventDetails);
+                var table = document.getElementById(tableID);
+                table.rows[j].cells[0].innerHTML = j;
+                table.rows[j].cells[1].innerHTML = eventDetails[0];
+                table.rows[j].cells[2].innerHTML = eventDetails[1];
+            }
+        </script>
+        <script language="javascript">
+            var k = 1;
+            function addRow(tableID, eventDetails) {
+                var table = document.getElementById(tableID);
+                var rowCount = table.rows.length;
+                if (k > 1) {
+                    var row = table.insertRow(rowCount);
+                    var colCount = table.rows[1].cells.length;
+                    for (var i = 0; i < colCount; i++) {
+                        var newcell = row.insertCell(i);
+                        newcell.innerHTML = table.rows[1].cells[i].innerHTML;
+                    }
+                }
+                setEventData(tableID, eventDetails, row, k++);
+            }
+
+             var m = 1;
+            function addModalRow(tableID, eventDetails) {
+                var table = document.getElementById(tableID);
+                var rowCount = table.rows.length;
+                if (m > 1) {
+                    var row = table.insertRow(rowCount);
+                    var colCount = table.rows[1].cells.length;
+                    for (var i = 0; i < colCount; i++) {
+                        var newcell = row.insertCell(i);
+                        newcell.innerHTML = table.rows[1].cells[i].innerHTML;
+                    }
+                }
+                setModalData(tableID, eventDetails, row, m++);
+            }
+         function createTable () {
+                var table = document.getElementById("resultTable");
+                for (var i = table.rows.length-1; i > 1; i--) {
+                    var rowCount = table.rows.length;
+                    if (rowCount > 1) {
+                        document.getElementById("resultTable").deleteRow(i);
+                    }
+                }
+                m=1;
+            }
+
+</script>
+       
+
+        <script>
+       
+            function getEventData(eventTime, currentTime, data) {
+                    console.log(currentTime);
+                    if(new Date(eventTime).getTime()<currentTime){
+                        addRow('eventTable', data);
+                    }
+            }
+            function editEvent (r) {
+                var table = document.getElementById("eventTable");
+                var i = r.parentNode.parentNode.rowIndex;
+                console.log(i);
+                var data = table.rows[i].cells[1].innerHTML;
+                // console.log(data);
+
+                    window.location = "editEvents.html"+data;
+            }
+        </script>
+        <script>
+            $(document).ready(function() {
+                $("#signOut").click(function() {
+                    var request = $.ajax({
+                        url: "http://192.168.0.105:3000/logout",
+                        type: "GET",
+                        xhrFields: {
+                            withCredentials: true
+                        }
+
+                    });
+                    request.done(function(msg) {
+                        //window.location = "interview_platform.html";
+                    });
+
+                    request.fail(function(jqXHR, textStatus) {
+                        alert("Invalid email or password.");
+                    });
                 });
             });
-        });
+        </script>
+        <script>
         
-    </script>
+        $('button.btnDelete').on('click', function (e) {
+            e.preventDefault();
+            var id = $(this).closest('tr').data('id');
+            $('#myModal').data('id', id).modal('show');
+        });
 
-</head>
-    <body >
-      <script>
-         
-      </script>   
-      <div class="well well-sm text-center" style="background-color:#173245; padding-left:8%">
-	    <div><h1 style="color:white">Interview Platform
-	      <a href="interview_platform.html" class="btn btn-primary btn-lg" id="signOut" style="float:right">Sign Out</span></a> 
-	    </h1></div>
-	  </div>      
+        $('#btnDelteYes').click(function () {
+            var id = $('#myModal').data('id');
+            $('[data-id=' + id + ']').remove();
+            $('#myModal').modal('hide');
+        });
+
+        </script>
+    </head>
+
+    <body>
+        <div class="well well-sm text-center" style="background-color:#173245; padding-left:8%">
+        <div><h1 style="color:white">Interview Platform
+          <a href="interview_platform.html" class="btn btn-primary btn-md" id="signOut" style="float:right">Sign Out</span></a> 
+        </h1></div>
+      </div>      
 
     <div class="container col-md-12" style="padding-top:2%; padding-left:5%; padding-right:5%">
       <div class="row">
@@ -170,7 +236,7 @@
           <li>
             <a href="userProfile.html">Profile</a>
           </li>
-          <li><a href="pastEvents.html">Event History </a>
+          <li><a href="pastEvents_User.html">Event History </a>
           </li>
           <li><a href="regEvents.html">Registered Events </a>
           </li>
@@ -178,35 +244,80 @@
           </li>
         </ul>
     </div>
-    
-      <div class="panel panel-primary" style="margin: 0 auto; width:80%;  float:right">
+
+
+        <div class="panel panel-primary" style="margin: 0 auto; width:80%; float:left">
         <div class="panel-heading" >
-          <div class="panel-title text-center"><h4>Past Events</h4></div>
-        </div>          
-          <div class="panel-body" style="background:#E8EFF7;">
-            
-          <table class="table table-striped text-center" id="eventTable" style="width:90%" align="center">
+          <div class="panel-title text-center"><h3>Past Events</h3></div>
+        </div>        
+        <div class="panel-body" style="background:#E8EFF7;">
+           <br><br>
+            <table class="table text-center" id="eventTable">
                 <thead>
                     <tr>
-                        <th class="col-lg-1 text-center"></th>
-                        <th class="col-lg-3 text-center">Event Name</th>
-                        <th class="col-lg-3 text-center">Start Date</th>
-                        <th class="col-lg-3 text-center">End Date</th>
-                        <th ></th>
+                        <th class=" text-center"></th>
+                        <th class=" text-center">Event Name</th>
+                        <th class=" text-center">Date</th>
+                        <th class=" text-center">Time</th>
+                        <th class=" text-center"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><a href="#" class="btn btn-primary" onclick="editEvent(this)">View results</span></a></td>
-                        
+                        <td class="col-lg-1">1</td>
+                        <td class="col-lg-1">Column content</td>
+                        <td class="col-lg-3">Column content</td>
+                        <td class="col-lg-1">Column content</td>
+                        <td class="col-lg-1"><button type="button" class="btn btn-primary" onclick="getid(this)" data-toggle="modal" data-target="#deleteModal">View Result</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
+
         </div>
-      </div>     
+        
+        </div>
+      </div>
+       
+           
+        <div class="modal fade" id="deleteModal" >
+          <div class="modal-dialog" style="padding-top: 5%; width:50%">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" align ="center">Results</h4>
+              </div>
+              <br>
+              <div class="modal-body">
+                <table class="table table-striped text-center" id="resultTable">
+                    <thead>
+                        <tr>
+                        <th class="col-lg-1"></th>
+                        <th class="col-lg-6 text-center">Criteria</th>
+                        <th class="col-lg-3 text-center">Rating</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="col-lg-1">1</td>
+                        <td class="col-lg-1">Column content</td>
+                        <td class="col-lg-1">Column content</td>
+                        
+                    </tr>
+                </tbody>
+                </table>
+              </div>
+                    
+            </div>
+          </div>
+
+        <!-- Modal -->
+
+    <!-- jQuery -->
+    <script src="jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     </body>
-</html>
+
+</html> 
