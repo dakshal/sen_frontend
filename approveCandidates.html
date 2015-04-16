@@ -1,0 +1,240 @@
+<head>
+    <title>Approve Candidates</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery.min.js"></script>
+    <script type="text/javascript">
+        function Auth() {
+            var location = window.location.href.split('/')[2];
+            var request = $.ajax({
+                url: "http://" + location + ":3000/session",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                    window.location = "userProfile.html";
+                } else if (msg['role'] == "admin") {
+                    get_event();
+                }
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                window.location = "index.html";
+            });
+        }
+        window.onpaint = Auth();
+    </script>
+    <script>
+        var events;
+        var k = 1;
+
+        function get_event() {
+            var location = window.location.href.split('/')[2];
+            var request = $.ajax({
+                url: "http://" + location + ":3000/events",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                events = msg;
+                for (var eventsName in events) {
+                    $('<option>' + events[eventsName] + '</option>').appendTo('#eventName');
+                }
+                getCandidates();
+
+            });
+            request.fail(function(jqXHR, textStatus) {
+                //window.location = "interview_platform.html";
+            });
+        }
+        $(document).ready(function() {
+            $(".target").change(function() {
+                getCandidates();
+
+            });
+        });
+
+        function getCandidates() {
+                var eventname = document.getElementById("eventName");
+                var location = window.location.href.split('/')[2];
+                var request = $.ajax({
+                    url: "http://" + location + ":3000/events/" + eventname.value + "/registrations",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    if (msg.length == 0) {
+                        for (var i = k - 1; i > 1; i--) {
+                            document.getElementById("candidateTable").deleteRow(i);
+                        };
+                        k = 1;
+                        addRow('candidateTable', "No Candidate Available");
+                    } else {
+                        for (var i = k - 1; i > 1; i--) {
+                            document.getElementById("candidateTable").deleteRow(i);
+                        };
+                        k = 1;
+                        for (var eventsName in msg) {
+                            addRow('candidateTable', msg[eventsName]);
+                        }
+                    }
+                });
+                request.fail(function(jqXHR, textStatus) {
+                    //window.location = "interview_platform.html";
+                });
+            }
+            // window.onpaint = get_event();
+        function setEventData(tableID, eventDetails, row, j) {
+            console.log(eventDetails);
+            var table = document.getElementById(tableID);
+            table.rows[j].cells[0].innerHTML = j;
+            table.rows[j].cells[1].innerHTML = eventDetails;
+            table.rows[j].cells[2].innerHTML = table.rows[1].cells[2].innerHTML;
+        }
+
+        function addRow(tableID, eventDetails) {
+            var table = document.getElementById(tableID);
+            var rowCount = table.rows.length;
+            if (k > 1) {
+                var row = table.insertRow(rowCount);
+                var colCount = table.rows[1].cells.length;
+                for (var i = 0; i < colCount; i++) {
+                    var newcell = row.insertCell(i);
+                    newcell.innerHTML = table.rows[1].cells[i].innerHTML;
+                }
+            }
+            setEventData(tableID, eventDetails, row, k++);
+        }
+
+        function deleteRow(r) {
+            var table = document.getElementById("candidateTable");
+            var rowCount = table.rows.length;
+            var i = r.parentNode.parentNode.rowIndex;
+            document.getElementById("candidateTable").deleteRow(i);
+        }
+
+        function approveCandidate(r) {
+            var location = window.location.href.split('/')[2];
+            var eventname = document.getElementById("eventName");
+            var table = document.getElementById("candidateTable");
+            var i = r.parentNode.parentNode.rowIndex;
+            console.log(i);
+            var data = table.rows[i].cells[1].innerHTML;
+            console.log(data);
+
+            var request = $.ajax({
+                url: "http://" + location + ":3000/events/" + eventname.value + "/approve",
+                type: "POST",
+                dataType: 'json',
+                data: {
+                    email: data
+                },
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                getCandidates();
+
+            });
+            request.fail(function(jqXHR, textStatus) {
+                //window.location = "interview_platform.html";
+            });
+        }
+        $(document).ready(function() {
+            $("#signOut").click(function() {
+                var location = window.location.href.split('/')[2];
+                var request = $.ajax({
+                    url: "http://" + location + ":3000/logout",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+
+                });
+                request.done(function(msg) {
+                    window.location = "index.html";
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    alert("Unable to connect to server");
+                });
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+    <script>
+    </script>
+    <div class="well well-sm text-center" style="background-color:#173245; padding-left:8%">
+        <div>
+            <h1 style="color:white">Interview Platform - Administrator
+        <a class="btn btn-primary btn-lg" id="signOut" style="float:right">Sign Out</span></a> 
+      </h1></div>
+    </div>
+
+    <div class="container col-md-12" style="padding-top:2%; padding-left:2%; padding-right:5%">
+        <div class="row">
+            <div class="col-md-2">
+                <ul class="nav nav-list nav-stacked">
+                    <li class="nav-header" style="font-size:20px"><b>Quick Links</b></li>
+                    <li>
+                        <a href="adminProfile.html">Profile</a>
+                    </li>
+                    <li><a href="pastEvents.html">Event History </a>
+                    </li>
+                    <li><a href="createEvent.html">Create Event</a>
+                    </li>
+
+                    <li><a href="schedule.html">Schedule Inteview</a>
+                    </li>
+                    <li><a href="changePasswordAdmin.html">Change Password </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="panel panel-primary" style="margin: 0 auto; width:60%; float:center">
+
+                <div class="panel-body" style="background:#E8EFF7;">
+                    <legend class="text-center">
+                        <div class="form-group">
+                            <label for="inputEmail" class="col-lg-4 control-label">Select an event</label>
+                            <div class="col-lg-6">
+                                <select class="form-control target" id="eventName" required>
+                                </select>
+                            </div>
+                        </div>
+                    </legend>
+                    <br>
+                    <br>
+                    <table class="table" id="candidateTable" style="width:90%" align="center">
+                        <thead>
+                            <tr>
+                                <th class="col-lg-1">#</th>
+                                <th class="col-lg-10">Candidate Name</th>
+                                <th class="col-lg-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Column content</td>
+                                <td><a href="#" class="btn btn-success" onclick="approveCandidate(this)">Approve</span></a></td>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+</body>
+
+</html>

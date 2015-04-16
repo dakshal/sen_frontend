@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Interview Platform</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="landing-page.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+
+    <script>
+        function signIn() {
+            // console.log($("#inputEmail").val());
+            // console.log($("#inputPassword").val());
+            var location = window.location.href.split('/')[2];
+            var request = $.ajax({
+                url: "http://" + location + ":3000/login",
+                type: "POST",
+                data: {
+                    email: $("#inputEmail").val(),
+                    password: $("#inputPassword").val()
+
+                },
+                dataType: 'json',
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                if ($('#remember').attr('checked')) {
+                    $('#formSubmit').submit();
+                }
+                Auth();
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                console.log(jqXHR, textStatus);
+
+                alert("Invalid email or password.");
+            });
+        }
+
+        function Auth() {
+            var location = window.location.href.split('/')[2];
+            var request = $.ajax({
+                url: "http://" + location + ":3000/session",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+
+            });
+            request.done(function(msg) {
+                console.log(msg.role);
+                if (msg.role == "Interviewer" || msg.role == "Interviewee") {
+                    window.location = "userProfile.html";
+                } else if (msg.role == "admin") {
+                    window.location = "adminProfile.html";
+                }
+                //window.location = "userProfile.html";
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                alert("Server connection is no available");
+            });
+        }
+
+        function forgotPwd() {
+            if ($('#inputEmail').val() == '') {
+                alert("Please enter your email address");
+            } else {
+                // console.log($('#inputEmail').val());
+                var email = encodeURIComponent($('#inputEmail').val());
+                // console.log(email);
+                var location = window.location.href.split('/')[2];
+                var request = $.ajax({
+                    url: "http://" + location + ":3000/users/" + email + "/resetpwd",
+                    type: "POST",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+
+                });
+                request.done(function(msg) {
+                    alert("We have sent you a new password. Please check your mail.");
+                    //window.location = "userProfile.html";
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    alert("Invalid email.");
+                });
+            }
+
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+
+
+    <!-- Header -->
+    <a name="about"></a>
+    <div class="intro-header">
+
+        <div class="container" style="padding-top:5%">
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="intro-message" style="padding-top: 2%">
+                        <h1 style="color: #2E8AE6">Interview  Platform</h1>
+                        <div class="container" style="width:25%">
+                            <br>
+                            <form class="form-signin" id="formSubmit">
+                                <h2 class="form-signin-heading" style="color: #3399FF">Sign In</h2>
+                                <label for="inputEmail" class="sr-only">Email address</label>
+                                <input type="email" id="inputEmail" class="form-control" style="color: #000000" placeholder="Email address" required autofocus>
+                                <label for="inputPassword" class="sr-only">Password</label>
+                                <input type="password" id="inputPassword" class="form-control" style="color: #000000" placeholder="Password" required>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="remember-me" id="remember"> Remember me
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <a onClick="forgotPwd()">Forgot Password?</a>
+                                    </label>
+                                </div>
+                                <button class=" btn-lg btn-primary btn-block" type="button" onClick="signIn()">Sign in</button>
+                            </form>
+
+                        </div>
+                        <!-- /container -->
+                        <hr class="intro-divider">
+                        <ul class="list-inline intro-social-buttons">
+
+                            <li>
+                                <button href="#" class="btn-lg btn-primary btn-block" data-toggle="modal" data-target="#signupModal">Sign Up Now</button>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    <!-- /.intro-header -->
+
+    <!-- Page Content -->
+
+    <a name="services"></a>
+    <div class="content-section-a">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5 col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">Audio and Video Chat</h2>
+                    <p class="lead">Interview developers online with our own video chat using WebRTC. Judge the interviewee based on his soft skills and body language.</p>
+                </div>
+                <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+                    <img class="img-responsive" style="width:70%; height:70%; float:right" src="img/chat.png" alt="">
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    <!-- /.content-section-a -->
+
+    <div class="content-section-b">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-5 col-lg-offset-1 col-sm-push-6  col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">Collaborative Editor</h2>
+                    <p class="lead">A Realtime Collaborative Code Editor with support for 5 languages. Compile and run codes in C, C++, Java, Python and Ruby along with syntax highlighting. </p>
+                </div>
+                <div class="col-lg-5 col-sm-pull-6  col-sm-6">
+                    <img class="img-responsive" style="width:70%; height:70%; float:left" src="img/code.png" alt="">
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container -->
+
+    </div>
+    <!-- /.content-section-b -->
+
+    <div class="content-section-a">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-lg-5 col-sm-6">
+                    <hr class="section-heading-spacer">
+                    <div class="clearfix"></div>
+                    <h2 class="section-heading">Hire Developers</h2>
+                    <p class="lead">Select the best developers and give them a chance.</p>
+                </div>
+                <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+                    <img class="img-responsive" style="width:70%; height:70%; float:right" src="img/hire.png" alt="">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="list-inline">
+                        <li>
+                            <a href="interviewPlatform.html">Home</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;</li>
+                        <li>
+                            <a data-toggle="modal" href="#aboutModal">About</a>
+                        </li>
+
+                        <li class="footer-menu-divider">&sdot;</li>
+                        <li>
+                            <a href="#contact">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal fade" id="aboutModal">
+        <div class="modal-dialog" style="padding-top: 5%; width:60%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" align="center">Interview  Platform</h4>
+                </div>
+                <div class="modal-body">
+                    <p style="font-family:arial; font-size:17px; text-align:justify">Interview Platform is an ideal tool for Online Interviewing of Developers and judging them on various parameters.
+                    </p>
+                    <p style="font-family:arial; font-size:17px; text-align:justify">
+                        Realtime Collaborative Code Editor, Compiler, Audio & Video Chat act as a more precise substitute for a real world face-to-face interview. With Realtime Video Chat you can go one up on face-to-face interviewing by being able to assess a candidate without actually being there and also study the mind of the coder as he codes his masterpiece.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="signupModal">
+        <div class="modal-dialog" style="padding-top: 5%; width:40%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" align="center">Sign Up</h4>
+                </div>
+                <br>
+                <div class="modal-body" align="center">
+                    <a href="signUpInterviewee.html" class="btn btn-success btn-lg" style="font-size:30px">As an Interviewee</a>
+                    <br>
+                    <br>
+                    <br>
+                    <a href="signUp.html" class="btn btn-danger btn-lg" style="font-size:30px">As an Interviewer</a>
+                    <br>
+                    <br>
+                    <br>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="bootstrap.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,265 @@
+<html>
+
+<head>
+    <title>Create Event</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="jquery.min.js"></script>
+    <link rel="stylesheet" href="bootstrap.css">
+    <script type="text/javascript">
+        function Auth() {
+            var location = window.location.href.split('/')[2];
+            var request = $.ajax({
+                url: "http://" + location + ":3000/session",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                    window.location = "userProfile.html";
+                } else if (msg['role'] == "admin") {}
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                window.location = "index.html";
+            });
+        }
+        window.onpaint = Auth();
+    </script>
+    <script language="javascript">
+        function addRow(tableID) {
+            var table = document.getElementById(tableID);
+            var rowCount = table.rows.length;
+            var row = table.insertRow(rowCount);
+            var colCount = table.rows[0].cells.length;
+            for (var i = 0; i < colCount; i++) {
+                var newcell = row.insertCell(i);
+                newcell.innerHTML = table.rows[0].cells[i].innerHTML;
+                switch (newcell.childNodes[0].type) {
+                    case "text":
+                        newcell.childNodes[0].value = "";
+                        break;
+                    case "number":
+                        newcell.childNodes[0].value = "";
+                        break;
+                }
+            }
+        }
+
+        function deleteRow(r) {
+            var table = document.getElementById("dataTable");
+            var rowCount = table.rows.length;
+            if (rowCount > 1) {
+                var i = r.parentNode.parentNode.rowIndex;
+                document.getElementById("dataTable").deleteRow(i);
+            } else {
+                alert("Atleast one criteria required");
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        function cancleEvent() {
+            window.location = "adminProfile.html";
+        }
+    </script>
+    <script type="text/javascript">
+        function submitValue() {
+            window.location = "adminProfile.html";
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#inputSubmit").click(function() {
+                var arrCriteriaType = $("input[id='inputCriteriaType']")
+                    .map(function() {
+                        return $(this).val();
+                    }).get();
+                var arrMinVal = $("input[id='inputMinVal']")
+                    .map(function() {
+                        return $(this).val();
+                    }).get();
+                var arrMaxVal = $("input[id='inputMaxVal']")
+                    .map(function() {
+                        return $(this).val();
+                    }).get();
+                var arrDescription = $("input[id='inputDescription']")
+                    .map(function() {
+                        return $(this).val();
+                    }).get();
+
+                var data = [];
+
+
+                for (var i = arrCriteriaType.length - 1; i >= 0; i--) {
+                    var tmp = [];
+                    tmp[tmp.length] = arrCriteriaType[i];
+                    tmp[tmp.length] = arrMinVal[i];
+                    tmp[tmp.length] = arrMaxVal[i];
+                    tmp[tmp.length] = arrDescription[i];
+                    data[data.length] = tmp;
+                }
+                //data = data+"]";
+                console.log(JSON.stringify(data));
+
+                var location = window.location.href.split('/')[2];
+                var request = $.ajax({
+                    url: "http://" + location + ":3000/events",
+                    type: "PUT",
+                    data: JSON.stringify({
+                        'name': $('#inputEventName').val(),
+                        'criteria': JSON.stringify(data),
+                        'details': {
+                            'Starting Date': $('#inputStartDate').val(),
+                            'Ending Date': $('#inputEndingDate').val(),
+                            'Pointer Criteria': $('#inputEventPointerCriteria').val(),
+                            'Details': $('#inputTextarea').val()
+                        }
+
+                    }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    window.location = "adminProfile.html";
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    console.log(jqXHR, textStatus);
+                    alert("Please enter correct info.");
+                });
+
+            });
+        });
+
+        $(document).ready(function() {
+            $("#signOut").click(function() {
+                var location = window.location.href.split('/')[2];
+                var request = $.ajax({
+                    url: "http://" + location + ":3000/logout",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+
+                });
+                request.done(function(msg) {
+                    window.location = "index.html";
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    alert("Invalid email or password.");
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="well well-sm text-center" style="background-color:#173245; padding-left:8%">
+        <div>
+            <h1 style="color:white">Interview Platform - Administrator
+            <a class="btn btn-primary btn-lg" id="signOut" style="float:right">Sign Out</span></a> 
+          </h1></div>
+    </div>
+
+    <div class="container col-md-12" style="padding-top:2%; padding-left:2%; padding-right:5%">
+        <div class="row">
+            <div class="col-md-2">
+                <ul class="nav nav-list nav-stacked">
+                    <li class="nav-header" style="font-size:20px"><b>Quick Links</b></li>
+                    <li>
+                        <a href="adminProfile.html">Profile</a>
+                    </li>
+                    <li><a href="pastEvents.html">Event History </a>
+                    </li>
+                    <li><a href="createEvent.html">Create Event</a>
+                    </li>
+
+                    <li><a href="schedule.html">Schedule Interview</a>
+                    </li>
+                    <li><a href="changePasswordAdmin.html">Change Password </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="panel panel-primary" style="margin: 0 auto; margin-bottom:5%; width:80%; float:left">
+                <div class="panel-heading">
+                    <div class="panel-title text-center">
+                        <h3>Create Event</h3></div>
+                </div>
+                <div class="panel-body" style="background:#E8EFF7;">
+                    <form class="form-horizontal">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="inputEventName" class="col-lg-2 control-label">Event Name</label>
+                                <div class="col-lg-3">
+                                    <input type="text" class="form-control" id="inputEventName" placeholder="Text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEventCriteria" class="col-lg-2 control-label">Event Criteria</label>
+                                <div class="col-lg-9">
+                                    <a href="#" class="btn btn-primary" onclick="addRow('dataTable')">Add New Criteria</a>
+                                    <table class="table table-striped table-hover " id="dataTable">
+                                        <tbody>
+                                            <tr>
+                                                <td class="form-group col-md-3">
+                                                    <input class="form-control" type="text" id="inputCriteriaType" placeholder="Criteria Type">
+                                                </td>
+                                                <td class="form-group col-lg-2">
+                                                    <input class="form-control" type="number" id="inputMinVal" placeholder="Min Val">
+                                                </td>
+                                                <td class="form-group col-lg-2">
+                                                    <input class="form-control" type="number" id="inputMaxVal" placeholder="Max Val">
+                                                </td>
+                                                <td class="form-group col-lg-5">
+                                                    <textarea class="form-control" type="text" id="inputDescription" placeholder="Criteria Description"></textarea>
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="btn btn-danger" onclick="deleteRow(this)">Delete</a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEventPointerCriteria" class="col-lg-2 control-label">Pointer Criteria</label>
+                                <div class="col-lg-1">
+                                    <input type="number" class="form-control" id="inputEventPointerCriteria" min="0" max="10" placeholder "Minimum Value">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label">Starting From</label>
+                                <div class="col-lg-3">
+                                    <input type="date" class="form-control" id="inputStartDate" max="2050-12-31" min="2000-01-01" placeholder="dd/mm/yyyy">
+                                </div>
+                                <label class="col-lg-2 control-label">Ending Date</label>
+                                <div class="col-lg-3">
+                                    <input type="date" class="form-control" id="inputEndingDate" max="2050-12-31" min="2000-01-01" placeholder="dd/mm/yyyy">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputTextarea" class="col-lg-2 control-label">Details</label>
+                                <div class="col-lg-9">
+                                    <textarea class="form-control" rows="3" id="inputTextarea"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-9 col-lg-offset-2">
+                                    <button type="reset" class="btn btn-default" onclick="cancleEvent()">Cancel</button>
+                                    <button type="button" class="btn btn-primary" id="inputSubmit">Submit</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+</body>
+
+</html>

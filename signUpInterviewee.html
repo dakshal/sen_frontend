@@ -1,0 +1,76 @@
+<head>
+<title>Sign Up Interviewee</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <script src="jquery.min.js"></script>
+</head>
+    <body >
+      <script>
+          function signUp(){
+           var location = window.location.href.split('/')[2];
+            var request = $.ajax({
+                          url: "http://"+location+":3000/users",
+                          type: "PUT",
+                          data: {
+                              name: $("#inputName").val(),
+                              email: $("#inputEmail").val(),
+                              role: "Interviewee"
+                          },
+                          dataType: 'json',
+                          xhrFields: {
+                            withCredentials: true
+                         }
+                      });
+                      request.done(function(msg) {
+                        window.location = "index.html";
+                      });
+
+                      request.fail(function(jqXHR, textStatus) {
+                          alert("Please enter correct info.");
+                      });
+          }
+      </script>   
+      <div class="well well-sm text-center" style="background-color:#173245;">
+        <div><h1 style="color:white">Interview Platform</h1></div>
+      </div> 
+      <div class="panel panel-primary" style="margin: 0 auto; margin-top: 2%; width:50%;">
+        <div class="panel-heading" >
+          <div class="panel-title text-center"><h3>Sign Up</h3></div>
+        </div>
+        <div class="panel-body" style="background:#E8EFF7;">
+          <form class="form-horizontal" style="margin: 0 auto; width:100%;">
+            <fieldset>
+              <legend style="width: 100%; text-align: center;">Basic Information</legend>
+              <div class="form-group">
+                <label for="inputName" class="col-lg-3 control-label">Full Name</label>
+                
+                <div class="col-lg-8">
+                  <input class="form-control" id="inputName" placeholder="Full Name" type="text">
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="inputEmail" class="col-lg-3 control-label">Email</label>
+
+                <div class="col-lg-8">
+                  <input class="form-control" id="inputEmail" placeholder="Email" type="text">
+                  <span class="help-block">We'll send you an email along with a password. Please sign in with the given password and change it later.</span>
+                </div>
+              </div>
+              
+              
+              <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-3">
+                  <button type="reset" class="btn btn-default">Cancel</button>
+                  <button type="button" class="btn btn-primary" onClick="signUp()">Submit</button>
+                </div>
+              </div>
+            </fieldset>
+        </form>
+        </div>
+      </div>
+        
+      
+    </body>
+</html>

@@ -1,0 +1,263 @@
+<html>
+
+<head>
+    <title>Schedule interview</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="bootstrap.min.js"></script>
+    <script src="jquery.min.js"></script>
+
+    <script>
+        var events;
+
+        function get_event() {
+            var location = window.location.href.split('/')[2];
+            var request = $.ajax({
+                url: "http://" + location + ":3000/events",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                events = msg;
+                for (var eventsName in events) {
+                    $('<option>' + events[eventsName] + '</option>').appendTo('#eventName');
+                    getRegistration();
+                }
+            });
+            request.fail(function(jqXHR, textStatus) {
+                window.location = "index.html";
+            });
+        }
+        $(document).ready(function() {
+            $(".target").change(function() {
+                getRegistration();
+            });
+        });
+
+        function getRegistration() {
+            var eventname = document.getElementById("eventName");
+            var location = window.location.href.split('/')[2];
+            var request = $.ajax({
+                url: "http://" + location + ":3000/events/" + eventname.value + "/registered",
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                events = msg;
+                var selectInterviewee = $('#intervieweeName');
+                selectInterviewee.empty();
+                var selectInterviewer = $('#interviewerName');
+                selectInterviewer.empty();
+                for (var eventsName in events) {
+                    $('<option>' + events[eventsName] + '</option>').appendTo('#intervieweeName');
+                    $('<option>' + events[eventsName] + '</option>').appendTo('#interviewerName');
+                }
+            });
+            request.fail(function(jqXHR, textStatus) {
+                window.location = "index.html";
+            });
+        }
+        window.onpaint = get_event();
+    </script>
+
+    <script>
+        function validate() {
+            var eventname = document.getElementById("eventName");
+            var eventdate = document.getElementById("date");
+            var interviewee = document.getElementById("intervieweeName");
+            var interviewer = document.getElementById("interviewerName");
+            var location = window.location.href.split('/')[2];
+            var request = $.ajax({
+                url: "http://" + location + ":3000/events/" + eventname.value,
+                type: "GET",
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                console.log(msg.details['Ending Date'], eventdate.value);
+                var D1 = msg.details['Ending Date'];
+                var D2 = eventdate.value;
+                var D3 = msg.details['Starting Date'];
+                if (((new Date(D1).getTime()) >= (new Date(D2).getTime())) && ((new Date(D3).getTime()) <= (new Date(D2).getTime()))) {
+                    if (interviewee.value != interviewer.value) {
+                        submitData();
+                    } else {
+                        var output = document.getElementById("alert1");
+                        var val = "";
+                        var ele = document.createElement("div");
+                        ele.setAttribute("id", "openAlert");
+                        ele.setAttribute("class", "alert alert-dismissible alert-danger");
+                        ele.innerHTML = "Interviewee and Interviewer must be different";
+                        var div = document.createElement("input");
+                        div.setAttribute("type", "button");
+                        div.setAttribute("class", "close");
+                        div.setAttribute("data-dismiss", "alert");
+                        div.innerHTML = "X";
+                        ele.appendChild(div);
+                        output.appendChild(ele);
+                    }
+                } else {
+                    var output = document.getElementById("alert2");
+                    var ele = document.createElement("div");
+                    ele.setAttribute("id", "openAlert");
+                    ele.setAttribute("class", "alert alert-dismissible alert-danger");
+                    ele.innerHTML = "Date is already passed or not available";
+                    var div = document.createElement("input");
+                    div.setAttribute("type", "button");
+                    div.setAttribute("class", "close");
+                    div.setAttribute("data-dismiss", "alert");
+                    div.innerHTML = "X";
+                    ele.appendChild(div);
+                    output.appendChild(ele);
+                }
+            });
+            request.fail(function(jqXHR, textStatus) {
+                window.location = "index.html";
+            });
+        }
+    </script>
+    <script>
+        function submitData() {
+            var eventName = document.getElementById("eventName");
+            var interviewee = document.getElementById("intervieweeName");
+            var interviewer = document.getElementById("interviewerName");
+            var date = document.getElementById("date");
+            var time = document.getElementById("time");
+            var data = {};
+            JSON.stringify(data);
+            var location = window.location.href.split('/')[2];
+            var request = $.ajax({
+                url: "http://" + location + ":3000/events/" + eventName.value + "/interviews",
+                type: "PUT",
+                data: {
+                    "name": eventName.value,
+                    "interviewee": interviewee.value,
+                    "interviewer": interviewer.value,
+                    "timestamp": date.value + " " + time.value
+                },
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+            request.done(function(msg) {
+                window.location = "adminProfile.html";
+            });
+            request.fail(function(jqXHR, textStatus) {
+                window.location = "index.html";
+            });
+            console.log(data);
+        }
+        $(document).ready(function() {
+            $("#signOut").click(function() {
+                var location = window.location.href.split('/')[2];
+                var request = $.ajax({
+                    url: "http://" + location + ":3000/logout",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+
+                });
+                request.done(function(msg) {
+                    window.location = "index.html";
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    alert("Invalid email or password.");
+                });
+            });
+        });
+    </script>
+
+</head>
+
+<body>
+    <div class="well well-sm text-center" style="background-color:#173245; padding-left:8%">
+        <div>
+            <h1 style="color:white">Interview Platform - Administrator
+        <a href="#" class="btn btn-primary btn-lg" id="signOut" style="float:right">Sign Out</span></a> 
+      </h1></div>
+    </div>
+
+    <div class="container col-md-12" style="padding-top:2%; padding-left:2%; padding-right:5%">
+        <div class="row">
+            <div class="col-md-2">
+                <ul class="nav nav-list nav-stacked">
+                    <li class="nav-header" style="font-size:20px"><b>Quick Links</b></li>
+                    <li>
+                        <a href="adminProfile.html">Profile</a>
+                    </li>
+                    <li><a href="pastEvents.html">Event History </a>
+                    </li>
+                    <li><a href="createEvent.html">Create Event</a>
+                    </li>
+
+                    <li><a href="schedule.html">Schedule Interview</a>
+                    </li>
+                    <li><a href="changePasswordAdmin.html">Change Password </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="panel panel-primary" style="margin: 0 auto; width:60%; float:center">
+                <div class="panel-heading">
+                    <div class="panel-title text-center">
+                        <h3>Schedule Event</h3></div>
+                </div>
+                <div class="panel-body" style="background:#E8EFF7;">
+                    <form class="form-horizontal">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="inputEmail" class="col-lg-3 control-label">Event Name:</label>
+                                <div class="col-lg-8">
+                                    <select class="form-control target" id="eventName" required>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputInterview" class="col-lg-3 control-label">Interviewee name:</label>
+                                <div class="col-lg-8">
+                                    <select class="form-control" id="intervieweeName" placeholder="Interviewee Name" required></select>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputInterviewer" class="col-lg-3 control-label">Interviewer Name:</label>
+                                <div class="col-lg-8">
+                                    <select class="form-control" id="interviewerName" placeholder="Interviewer Name" required></select>
+                                </div>
+                            </div>
+                            <div id="alert1"></div>
+                            <div class="form-group">
+                                <label for="inputDate" class="col-lg-3 control-label">Date:</label>
+                                <div class="col-lg-4">
+                                    <input type="date" class="form-control" id="date" required>
+                                </div>
+                            </div>
+                            <div id="alert2"></div>
+                            <div class="form-group">
+                                <label for="inputEmail" class="col-lg-3 control-label">Start Time:</label>
+                                <div class="col-lg-4">
+                                    <input type="time" class="form-control" id="time" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-10 col-lg-offset-2">
+                                    <a type="reset" class="btn btn-default" href="adminProfile.html">Cancel</a>
+                                    <button type="button" class="btn btn-primary" onClick="validate()">Submit</button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+
+</body>
+
+</html>
