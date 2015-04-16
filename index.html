@@ -41,7 +41,7 @@
                 }
             });
             request.done(function(msg) {
-                if ($('#remember').attr('checked')) {
+                if ($('#remember').is(':checked')) {
                     $('#formSubmit').submit();
                 }
                 Auth();
