@@ -187,8 +187,9 @@
                 console.log(i);
                 var data = table.rows[i].cells[1].innerHTML;
                 // console.log(data);
-
+                if(data !='No event available'){
                     window.location = "editEvents.html#"+data;
+                }
             }
         </script>
         <script>
@@ -228,8 +229,8 @@
         });
         var rowId;
         function getid (r) {
-            rowId = r.parentNode.parentNode.rowIndex;
-            console.log(rowId);
+                rowId = r.parentNode.parentNode.rowIndex;
+                console.log(rowId);
          }
          function deleteEvent (r) {
             console.log(rowId);
@@ -307,11 +308,11 @@
                 <tbody>
                     <tr>
                         <td class="col-lg-1">1</td>
-                        <td class="col-lg-3"><a href="#">Column content</a></td>
-                        <td class="col-lg-4">Column content</td>
-                        <td class="col-lg-2">Column content</td>
-                        <td class="col-lg-2">Column content</td>
-                        <td class="col-lg-1"><a href="#" class="btn btn-warning" onclick="editEvent(this)">Edit</span></a></td>
+                        <td class="col-lg-3">No event available</td>
+                        <td class="col-lg-4"></td>
+                        <td class="col-lg-2"></td>
+                        <td class="col-lg-2"></td>
+                        <td class="col-lg-1"><a class="btn btn-warning" onclick="editEvent(this)">Edit</span></a></td>
                         <td class="col-lg-1"><button type="button" class="btn btn-danger" onclick="getid(this)" data-toggle="modal" data-target="#deleteModal">Delete</button>
                         </td>
                     </tr>
