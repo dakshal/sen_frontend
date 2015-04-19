@@ -1,8 +1,9 @@
 (function( $ ){
 
   $.fn.pad = function( options ) {
+    var localIp = window.location.href.split('/')[2];
     var settings = {
-      'host'              : 'http://10.100.96.74:9001',
+      'host'              : 'http://'+localIp+':9001',
       'baseUrl'           : '/p/',
       'showControls'      : true,
       'showChat'          : false,
