@@ -13,7 +13,8 @@
 
     <script>
         function Auth() {
-                var localIp = window.location.href.split('/')[2];
+var ip= window.location.href.split('/')[2];
+var localIp= ip.split(':')[0];
                 var request = $.ajax({
                     url: "http://" + localIp + ":3000/session",
                     type: "GET",
@@ -40,7 +41,9 @@
 
         function checkTimeStamp(sessionId) {
             var currentTime;
-            var localIp = window.location.href.split('/')[2];
+            var ip= window.location.href.split('/')[2];
+var localIp= ip.split(':')[0];
+
             var request = $.ajax({
                 url: "http://" + localIp + ":3000/time",
                 type: "GET",
@@ -57,7 +60,9 @@
                 console.log("time not found");
             });
             var ongoingTable = document.getElementById("ongoingTable");
-            var localIp = window.location.href.split('/')[2];
+            var ip= window.location.href.split('/')[2];
+var localIp= ip.split(':')[0];
+
             var request = $.ajax({
                 url: "http://" + localIp + ":3000/users/" + sessionId + "/interviews",
                 type: "GET",
@@ -94,7 +99,9 @@
         function interviewEnd() {
             console.log("hi");
             var sessionId = '';
-            var localIp = window.location.href.split('/')[2];
+            var ip= window.location.href.split('/')[2];
+var localIp= ip.split(':')[0];
+
             var request = $.ajax({
                 url: "http://" + localIp + ":3000/session",
                 type: "GET",
@@ -123,13 +130,17 @@
     </script>
     <script>
         function sendRequest(eventId, eventName, role) {
-            var localIp = window.location.href.split('/')[2];
+            var ip= window.location.href.split('/')[2];
+var localIp= ip.split(':')[0];
+
             var emai = "http://" + localIp + ":3000/events/" + eventName + "/interviews/" + eventId + "/end";
             console.log(emai);
             if (role == "Interviewer") {
                 window.location = "rating.html";
             } else {
-                var localIp = window.location.href.split('/')[2];
+                var ip= window.location.href.split('/')[2];
+var localIp= ip.split(':')[0];
+
                 var request = $.ajax({
                     url: "http://" + localIp + ":3000/events/" + eventName + "/interviews/" + eventId + "/end",
                     type: "POST",
@@ -160,7 +171,9 @@
             jQuery.get(contentsUrl, function(data1) {
                 data1;
                 console.log(data1);
-                var localIp = window.location.href.split('/')[2];
+                var ip= window.location.href.split('/')[2];
+var localIp= ip.split(':')[0];
+
                 var request = $.ajax({
                     url: "http://" + localIp + ":3000/compile",
                     type: "POST",
@@ -215,7 +228,9 @@
             <div class="col-md-6" style="height:80%">
                 <script src="webrtc.js"></script>
                 <script>
-                    var localIp = window.location.href.split('/')[2];
+                    var ip= window.location.href.split('/')[2];
+var localIp= ip.split(':')[0];
+
                     var request = $.ajax({
                         url: "http://" + localIp + ":3000/session",
                         type: "GET",
@@ -256,7 +271,9 @@
                     <script src="js/etherpad.js"></script>
                     <div id="examplePadIntense"></div>
                     <script type="text/javascript">
-                        var localIp = window.location.href.split('/')[2];
+                        var ip= window.location.href.split('/')[2];
+var localIp= ip.split(':')[0];
+
                         var request = $.ajax({
                             url: "http://" + localIp + ":3000/session",
                             type: "GET",

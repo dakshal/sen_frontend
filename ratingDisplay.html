@@ -14,7 +14,9 @@
 
     <script>
         function Auth() {
-            var location = window.location.href.split('/')[2];
+            var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
 
             var request = $.ajax({
                 url: "http://" + location + ":3000/session",

@@ -14,7 +14,9 @@
 
     <script>
         function Auth() {
-            var location = window.location.href.split('/')[2];
+            var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
 
             var request = $.ajax({
                 url: "http://" + location + ":3000/session",
@@ -50,7 +52,9 @@
         window.onpaint = Auth();
 
         function getEventData(eventName, eventId) {
-            var location = window.location.href.split('/')[2];
+            var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
             var link = "http://" + location + ":3000/events/";
             link = link.concat(eventName);
             //console.log(link);
@@ -135,7 +139,9 @@
                 }
 
                 console.log(json);
-                var location = window.location.href.split('/')[2];
+                var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
 
                 var request = $.ajax({
                     url: "http://" + location + ":3000/session",
@@ -146,7 +152,9 @@
                 });
 
                 request.done(function(msg) {
-                    var location = window.location.href.split('/')[2];
+                    var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
                     var link = "http://" + location + ":3000/events/" + msg.current_interview.event + "/interviews/" + msg.current_interview.id;
                     console.log(link);
                     var request = $.ajax({
@@ -160,7 +168,9 @@
                         }
                     });
                     request.done(function(resp) {
-                        var location = window.location.href.split('/')[2];
+                        var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
 
                         console.log(resp);
                         var endInterview = "http://" + location + ":3000/events/" + msg.current_interview.event + "/interviews/" + msg.current_interview.id + "/end";
@@ -205,7 +215,9 @@
 
     <script>
         function sendData(ratingdata) {
-            var location = window.location.href.split('/')[2];
+            var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
 
             var request = $.ajax({
                 url: "http://" + location + ":3000/events/eventname/interviews/id",

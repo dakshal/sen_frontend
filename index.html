@@ -26,7 +26,9 @@
         function signIn() {
             // console.log($("#inputEmail").val());
             // console.log($("#inputPassword").val());
-            var location = window.location.href.split('/')[2];
+            var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
             var request = $.ajax({
                 url: "http://" + location + ":3000/login",
                 type: "POST",
@@ -55,7 +57,9 @@
         }
 
         function Auth() {
-            var location = window.location.href.split('/')[2];
+            var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
             var request = $.ajax({
                 url: "http://" + location + ":3000/session",
                 type: "GET",
@@ -86,7 +90,9 @@
                 // console.log($('#inputEmail').val());
                 var email = encodeURIComponent($('#inputEmail').val());
                 // console.log(email);
-                var location = window.location.href.split('/')[2];
+                var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
                 var request = $.ajax({
                     url: "http://" + location + ":3000/users/" + email + "/resetpwd",
                     type: "POST",
