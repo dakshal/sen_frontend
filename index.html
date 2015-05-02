@@ -21,6 +21,32 @@
     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
+        <script type="text/javascript">
+            function Auth() {
+           var ip= window.location.href.split('/')[2];
+var location= ip.split(':')[0];
+
+                var request = $.ajax({
+                    url: "http://"+location+":3000/session",
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                        window.location = "userProfile.html";
+                    } else if (msg['role'] == "admin") {
+                        window.location = "adminProfile.html";
+                    }
+                });
+
+                request.fail(function(jqXHR, textStatus) {
+                    // window.location = "index.html";
+                });
+            }
+            window.onpaint = Auth();
+        </script>
 
     <script>
         function signIn() {

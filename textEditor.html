@@ -37,7 +37,7 @@ var localIp= ip.split(':')[0];
                     // alert("Unable to Authenticate");
                 });
             }
-            // window.onpaint = Auth();
+            window.onpaint = Auth();
 
         function checkTimeStamp(sessionId) {
             var currentTime;
@@ -75,15 +75,16 @@ var localIp= ip.split(':')[0];
                 var currEvent = false;
                 for (var i = 0; i < msg.length; i++) {
                     var eventTime = new Date(msg[i].time).getTime();
-                    if (eventTime - currentTime > 900000 || currentTime - eventTime > 900000) {} else {
+                    if (eventTime - currentTime > 9000000 || currentTime - eventTime > 9000000) {}
+                    else {
                         currEvent = true;
                         // alert(currEvent);
                     }
                     console.log(currEvent);
                 }
-                // if(!currEvent){
-                //   window.location = "userProfile.html";
-                // }
+                 if(!currEvent){
+                   window.location = "userProfile.html";
+                 }
             });
 
             request.fail(function(jqXHR, textStatus) {

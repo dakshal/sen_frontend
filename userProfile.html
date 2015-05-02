@@ -33,6 +33,10 @@ var location= ip.split(':')[0];
         });
         request.done(function(msg) {
             if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
+                var curr_inter = msg['current_interview'];
+                if(curr_inter['id'] > 0){
+                    window.location = "textEditor.html";
+                }
                 setUserData(msg);
             } else if (msg['role'] == "admin") {
                 window.location = "adminProfile.html";
