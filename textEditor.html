@@ -228,6 +228,17 @@ var localIp= ip.split(':')[0];
         <div class="row">
             <div class="col-md-6" style="height:80%">
                 <script src="webrtc.js"></script>
+                <div width="480" height="320" id="remotesVideos"></div>
+
+                <video id="localVideo" width="150" height="100" style="position:absolute; left:85%; top:0%"></video>
+
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-lg-5">
+                <form name="js1">
+                    <label style="padding-top:5%"><font size="5px">Code</font></label>
+                    <script src="js/etherpad.js"></script>
+                    <div id="examplePadIntense"></div>
                 <script>
                     var ip= window.location.href.split('/')[2];
 var localIp= ip.split(':')[0];
@@ -243,7 +254,13 @@ var localIp= ip.split(':')[0];
                     request.done(function(msg) {
                         var curr_inter = msg['current_interview'];
                         var videoId = "events-" + curr_inter['event'] + "-interviews-" + curr_inter['id'];
-                        console.log(videoId);
+                            $('#examplePadIntense').pad({
+                                'padId': videoId,
+                                'showChat': 'true',
+                                'width': 100,
+                                'height': 300,
+                                'userName': msg.details.name
+                            });                        console.log(videoId);
                         var webrtc = new SimpleWebRTC({
                             // the id/element dom element that will hold "our" video
                             localVideoEl: 'localVideo',
@@ -260,41 +277,6 @@ var localIp= ip.split(':')[0];
                         });
                     });
                 </script>
-                <div width="480" height="320" id="remotesVideos"></div>
-
-                <video id="localVideo" width="150" height="100" style="position:absolute; left:85%; top:0%"></video>
-
-            </div>
-            <div class="col-md-1"></div>
-            <div class="col-lg-5">
-                <form name="js1">
-                    <label style="padding-top:5%"><font size="5px">Code</font></label>
-                    <script src="js/etherpad.js"></script>
-                    <div id="examplePadIntense"></div>
-                    <script type="text/javascript">
-                        var ip= window.location.href.split('/')[2];
-var localIp= ip.split(':')[0];
-
-                        var request = $.ajax({
-                            url: "http://" + localIp + ":3000/session",
-                            type: "GET",
-                            xhrFields: {
-                                withCredentials: true
-                            }
-
-                        });
-                        request.done(function(msg) {
-                            var curr_inter = msg['current_interview'];
-                            var padId = "events-" + curr_inter['event'] + "-interviews-" + curr_inter['id'];
-                            $('#examplePadIntense').pad({
-                                'padId': padId,
-                                'showChat': 'true',
-                                'width': 100,
-                                'height': 300,
-                                'userName': msg.details.name
-                            }); // sets the pad id and puts the pad in the div                                
-                        });
-                    </script>
                     <hr>
                     <input type="button" class="btn btn-primary" id="CandR" onclick="compile()" value="Compile and Run">
 

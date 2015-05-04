@@ -39,11 +39,13 @@ var location= ip.split(':')[0];
     <script>
         var eventNames;
         var eventLength;
+        var count=0;
+        var curr=0;
 
         function get_event() {
                 var currentTime;
                 var ip= window.location.href.split('/')[2];
-var location= ip.split(':')[0];
+                var location= ip.split(':')[0];
 
                 var request = $.ajax({
                     url: "http://" + location + ":3000/time",
@@ -72,16 +74,57 @@ var location= ip.split(':')[0];
                 });
                 request.done(function(msg) {
                     eventNames = msg;
-                    for (var i = 0; i < eventNames.length; i++) {
-                        console.log(eventNames[i]);
-                        console.log(currentTime);
-                        getEventData(eventNames[i], currentTime);
-                    }
+                        for (var i = 0; i < eventNames.length; i++) {
+                            console.log(eventNames[i]);
+                            console.log(currentTime);
+                            getEventData(eventNames[i], currentTime);
+                        }
+                            count = eventNames.length;
                 });
-
                 request.fail(function(jqXHR, textStatus) {
                     alert("Unable to connect to server");
                     // window.location = "interview_platform.html";
+                });
+            }
+            function getEventData(eventName, currentTime) {
+                var ip= window.location.href.split('/')[2];
+                var location= ip.split(':')[0];
+                var link = "http://" + location + ":3000/events/";
+                link = link.concat(eventName);
+                console.log(link);
+                var request = $.ajax({
+                    url: link,
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    var xyz = msg['details'];
+                    var date = xyz['Ending Date'];
+                    console.log(currentTime);
+                    if (new Date(date).getTime() < currentTime) {
+                        addRow('eventTable', msg);
+                    }
+                    else {
+                        curr++;
+                    }
+                    if(curr==count){
+                                if(curr == eventNames.length){
+                                var table = document.getElementById("eventTable");
+                                table.rows[1].cells[0].innerHTML = '';
+                                table.rows[1].cells[1].innerHTML = 'No Event Available';
+                                table.rows[1].cells[2].innerHTML = '';
+                                table.rows[1].cells[3].innerHTML = '';
+                                table.rows[1].cells[4].innerHTML = '';
+                                document.getElementById('edit').style.visibility = 'hidden';
+                                document.getElementById('delete').style.visibility = 'hidden';
+                            }
+
+                    }
+                });
+                request.fail(function(jqXHR, textStatus) {
+
                 });
             }
             // window.onpaint = get_event();
@@ -143,29 +186,7 @@ var location= ip.split(':')[0];
 
 
     <script>
-        function getEventData(eventName, currentTime) {
-            var link = "http://" + location + ":3000/events/";
-            link = link.concat(eventName);
-            console.log(link);
-            var request = $.ajax({
-                url: link,
-                type: "GET",
-                xhrFields: {
-                    withCredentials: true
-                }
-            });
-            request.done(function(msg) {
-                var xyz = msg['details'];
-                var date = xyz['Ending Date'];
-                console.log(currentTime);
-                if (new Date(date).getTime() < currentTime) {
-                    addRow('eventTable', msg);
-                }
-            });
-
-            request.fail(function(jqXHR, textStatus) {});
-        }
-
+        
         function editEvent(r) {
             var table = document.getElementById("eventTable");
             var i = r.parentNode.parentNode.rowIndex;
@@ -173,7 +194,7 @@ var location= ip.split(':')[0];
             var data = table.rows[i].cells[1].innerHTML;
             // console.log(data);
 
-            window.location = "editEvents.html" + data;
+            window.location = "editEvents.html#" + data;
         }
     </script>
     <script>
@@ -191,7 +212,7 @@ var location= ip.split(':')[0];
 
                 });
                 request.done(function(msg) {
-                    window.location = "interview_platform.html";
+                    window.location = "index.html";
                 });
 
                 request.fail(function(jqXHR, textStatus) {
@@ -240,6 +261,7 @@ var location= ip.split(':')[0];
                 if (msg.deleted) {
                     createTable('eventData');
                 }
+                window.location = "pastEvents.html";
             });
 
             request.fail(function(jqXHR, textStatus) {
@@ -299,14 +321,14 @@ var location= ip.split(':')[0];
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="col-lg-1">1</td>
-                                <td class="col-lg-1">Column content</td>
-                                <td class="col-lg-3">Column content</td>
-                                <td class="col-lg-1">Column content</td>
-                                <td class="col-lg-1">Column content</td>
-                                <td class="col-lg-1"><a href="#" class="btn btn-warning" onclick="editEvent(this)">Edit</span></a></td>
+                                <td class="col-lg-1"></td>
+                                <td class="col-lg-1"></td>
+                                <td class="col-lg-3"></td>
+                                <td class="col-lg-1"></td>
+                                <td class="col-lg-1"></td>
+                                <td class="col-lg-1"><button type="button" id="editEvent" class="btn btn-warning toglee" onclick="editEvent(this)">Edit</span></button></td>
                                 <td class="col-lg-1">
-                                    <button type="button" class="btn btn-danger" onclick="getid(this)" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                                    <button type="button" class="btn btn-danger" class="toglee" onclick="getid(this)" data-toggle="modal" data-target="#deleteModal">Delete</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -344,7 +366,7 @@ var location= ip.split(':')[0];
             <script src="js/jquery.js"></script>
 
             <!-- Bootstrap Core JavaScript -->
-            <script src="js/bootstrap.min.js"></script>
+            <script src="bootstrap.min.js"></script>
 </body>
 
 </html>

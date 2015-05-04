@@ -38,9 +38,11 @@ var location= ip.split(':')[0];
         <script>
             var eventNames;
             var eventLength;
+            var count=0;
+            var curr=0;
             function get_event() {
-           var ip= window.location.href.split('/')[2];
-var location= ip.split(':')[0];
+            var ip= window.location.href.split('/')[2];
+            var location= ip.split(':')[0];
 
             var currentTime;
               var request = $.ajax({
@@ -51,7 +53,7 @@ var location= ip.split(':')[0];
                 }
               });
               request.done(function(msg) {
-                console.log(msg);
+                // console.log(msg);
                 currentTime = new Date(msg['current_time']).getTime();
                 console.log(currentTime);
               });
@@ -70,16 +72,59 @@ var location= ip.split(':')[0];
                 });
                 request.done(function(msg) {
                     eventNames = msg;
-                    for (var i = 0; i < eventNames.length; i++) {
-                        console.log(eventNames[i]);
-                        console.log(currentTime);
-                        getEventData(eventNames[i], currentTime);
-                    }
+                        for (var i = 0; i < eventNames.length; i++) {
+                            console.log(eventNames[i]);
+                            console.log(currentTime);
+                            getEventData(eventNames[i], currentTime);
+                        }
+                            count = eventNames.length;
                 });
 
                 request.fail(function(jqXHR, textStatus) {
                     alert(" ");
                     // window.location = "interview_platform.html";
+                });
+            }
+            function getEventData(eventName, currentTime) {
+           var ip= window.location.href.split('/')[2];
+            var location= ip.split(':')[0];
+
+                var link = "http://"+location+":3000/events/";
+                link = link.concat(eventName);
+                console.log(link);
+                var request = $.ajax({
+                    url: link,
+                    type: "GET",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                });
+                request.done(function(msg) {
+                    var xyz = msg['details'];
+                    var date = xyz['Ending Date'];
+                    console.log(currentTime);
+                    if((new Date(date).getTime()+19800000)>currentTime){
+                        addRow('eventTable', msg);
+                    }
+                    else {
+                        curr++;
+                    }
+                    if(curr==count){
+                                if(curr == eventNames.length){
+                                var table = document.getElementById("eventTable");
+                                table.rows[1].cells[0].innerHTML = '';
+                                table.rows[1].cells[1].innerHTML = 'No Event Available';
+                                table.rows[1].cells[2].innerHTML = '';
+                                table.rows[1].cells[3].innerHTML = '';
+                                table.rows[1].cells[4].innerHTML = '';
+                                document.getElementById('edit').style.visibility = 'hidden';
+                                document.getElementById('delete').style.visibility = 'hidden';
+                            }
+
+                    }
+                });
+
+                request.fail(function(jqXHR, textStatus) {
                 });
             }
 
@@ -136,61 +181,8 @@ var location= ip.split(':')[0];
                     alert("Atleast one criteria required");
                 }
             }</script>
-        <script >
-            function Auth() {
-           var ip= window.location.href.split('/')[2];
-var location= ip.split(':')[0];
-
-                var request = $.ajax({
-                    url: "http://"+location+":3000/session",
-                    type: "GET",
-                    xhrFields: {
-                        withCredentials: true
-                    }
-
-                });
-                request.done(function(msg) {
-                    if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
-                        window.location = "error.html";
-                    } else if (msg['role'] == "admin") {
-                    }
-                    window.location = "profilepage.html";
-                });
-
-                request.fail(function(jqXHR, textStatus) {
-                    alert("Unable to Authenticate");
-                });
-            }
-        </script>
 
         <script>
-
-            function getEventData(eventName, currentTime) {
-           var ip= window.location.href.split('/')[2];
-var location= ip.split(':')[0];
-
-                var link = "http://"+location+":3000/events/";
-                link = link.concat(eventName);
-                console.log(link);
-                var request = $.ajax({
-                    url: link,
-                    type: "GET",
-                    xhrFields: {
-                        withCredentials: true
-                    }
-                });
-                request.done(function(msg) {
-                    var xyz = msg['details'];
-                    var date = xyz['Ending Date'];
-                    console.log(currentTime);
-                    if((new Date(date).getTime()+19800000)>currentTime){
-                        addRow('eventTable', msg);
-                    }
-                });
-
-                request.fail(function(jqXHR, textStatus) {
-                });
-            }
             function editEvent (r) {
                 var table = document.getElementById("eventTable");
                 var i = r.parentNode.parentNode.rowIndex;
@@ -265,6 +257,7 @@ var location= ip.split(':')[0];
                     if (msg.deleted) {
                         createTable('eventData');
                     }
+                    window.location = "adminProfile.html";
                 });
 
                 request.fail(function(jqXHR, textStatus) {
@@ -322,12 +315,12 @@ var location= ip.split(':')[0];
                 <tbody>
                     <tr>
                         <td class="col-lg-1">1</td>
-                        <td class="col-lg-3">No event available</td>
+                        <td class="col-lg-3"></td>
                         <td class="col-lg-4"></td>
                         <td class="col-lg-2"></td>
                         <td class="col-lg-2"></td>
-                        <td class="col-lg-1"><a class="btn btn-warning" onclick="editEvent(this)">Edit</span></a></td>
-                        <td class="col-lg-1"><button type="button" class="btn btn-danger" onclick="getid(this)" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                        <td class="col-lg-1"><a class="btn btn-warning" id="edit" onclick="editEvent(this)">Edit</span></a></td>
+                        <td class="col-lg-1"><button type="button" class="btn btn-danger" id="delete" onclick="getid(this)" data-toggle="modal" data-target="#deleteModal">Delete</button>
                         </td>
                     </tr>
                 </tbody>
@@ -365,7 +358,7 @@ var location= ip.split(':')[0];
     <script src="js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="bootstrap.min.js"></script>
     </body>
 
 </html> 

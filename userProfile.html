@@ -33,10 +33,6 @@ var location= ip.split(':')[0];
         });
         request.done(function(msg) {
             if (msg['role'] == "Interviewer" || msg['role'] == "Interviewee") {
-                var curr_inter = msg['current_interview'];
-                if(curr_inter['id'] > 0){
-                    window.location = "textEditor.html";
-                }
                 setUserData(msg);
             } else if (msg['role'] == "admin") {
                 window.location = "adminProfile.html";
@@ -58,6 +54,7 @@ var location= ip.split(':')[0];
         table.rows[1].cells[1].innerHTML = data.email;
         table.rows[2].cells[1].innerHTML = data.role;
         get_event(data.email);
+        setOngoing(data.email);
     }
     window.onpaint = Auth();
 </script>
@@ -65,13 +62,29 @@ var location= ip.split(':')[0];
 <script>
     var eventNames;
     var eventLength;
-
+    var count=0;
+    var curr=0;
+    var currentTime;
     function get_event(email) {
             var eid = encodeURIComponent(email);
             console.log(eid);
             var ip= window.location.href.split('/')[2];
-var location= ip.split(':')[0];
-
+            var location= ip.split(':')[0];
+              var request = $.ajax({
+                url: "http://"+location+":3000/time",
+                type: "GET",
+                xhrFields: {
+                  withCredentials: true
+                }
+              });
+              request.done(function(msg) {
+                // console.log(msg);
+                currentTime = new Date(msg['current_time']).getTime();
+                console.log(currentTime);
+              });
+              request.fail(function(jqXHR, textStatus) {
+                console.log("time not found");
+              });
             var request = $.ajax({
                 url: "http://" + location + ":3000/users/" + eid + "/events/notregistered",
                 type: "GET",
@@ -86,12 +99,65 @@ var location= ip.split(':')[0];
                     //console.log(eventNames);
                     getEventData(eventNames[i]);
                 }
+                count = eventNames.length;
+                if(eventNames.length<1){
+                    var table = document.getElementById("eventTable");
+                    table.rows[1].cells[0].innerHTML = '';
+                    table.rows[1].cells[1].innerHTML = 'No Event Available';
+                    table.rows[1].cells[2].innerHTML = '';
+                    table.rows[1].cells[3].innerHTML = '';
+                    table.rows[1].cells[4].innerHTML = '';
+                }
             });
 
             request.fail(function(jqXHR, textStatus) {
                 window.location = "index.html"
             });
         }
+            function getEventData(eventName) {
+        var ip= window.location.href.split('/')[2];
+        var location= ip.split(':')[0];
+
+        var link = "http://" + location + ":3000/events/";
+        link = link.concat(eventName);
+        //console.log(link);
+        var request = $.ajax({
+            url: link,
+            type: "GET",
+            xhrFields: {
+                withCredentials: true
+            }
+        });
+        request.done(function(msg) {
+                    var xyz = msg['details'];
+                    var date = xyz['Ending Date'];
+                    console.log(currentTime);
+                    if((new Date(date).getTime()+19800000)>currentTime){
+                        addRow('eventTable', msg);
+                    }
+                    else {
+                        curr++;
+                    }
+                    console.log(curr, count);
+                    if(curr==count){
+                                if(curr == eventNames.length){
+                                var table = document.getElementById("eventTable");
+                                table.rows[1].cells[0].innerHTML = '';
+                                table.rows[1].cells[1].innerHTML = 'No Event Available';
+                                table.rows[1].cells[2].innerHTML = '';
+                                table.rows[1].cells[3].innerHTML = '';
+                                table.rows[1].cells[4].innerHTML = '';
+                                table.rows[1].cells[5].innerHTML = '';
+                            }
+
+                    }
+        });
+
+        request.fail(function(jqXHR, textStatus) {
+            window.location = "index.html";
+        });
+    }
+
         //window.onpaint = get_event();
 </script>
 <script>
@@ -106,7 +172,8 @@ var location= ip.split(':')[0];
 </script>
 
 <script>
-    function setOngoing(sessionId) {
+
+function setOngoing(sessionId) {
         var currentTime;
         var ip= window.location.href.split('/')[2];
 var location= ip.split(':')[0];
@@ -136,47 +203,28 @@ var location= ip.split(':')[0];
         });
         request.done(function(msg) {
             console.log(msg);
+            var count=0;
             for (var i = 0; i < msg.length; i++) {
-                var eventTime = (new Date(msg[i].time).getTime() + 19800000);
+                var eventTime = (new Date(msg[i].time).getTime());
                 console.log(currentTime, "currentTime");
                 console.log(eventTime, new Date(msg[i].time).getTime(), msg[i].time, "eventTime");
-                console.log(eventTime - currentTime, "diff");
-                if (eventTime - currentTime > 10000000 || currentTime - eventTime > 10000000) {} else {
+                console.log(eventTime - currentTime, "diff", eventTime, currentTime);
+                if (eventTime - currentTime > 3600000 || currentTime - eventTime > 3600000) {} else {
                     addRowOngoing("ongoingTable", msg[i]);
+                    count++;
                 }
             }
-        });
-
-        request.fail(function(jqXHR, textStatus) {
-            window.location = "index.html"
-        });
-    }
-</script>
-<script>
-    function regEvent() {
-        //console.log("hi");
-        var sessionId = '';
-        var ip= window.location.href.split('/')[2];
-var location= ip.split(':')[0];
-
-        var request = $.ajax({
-            url: "http://" + location + ":3000/session",
-            type: "GET",
-            xhrFields: {
-                withCredentials: true
+            if(count<1){
+                console.log('join');
+                var table = document.getElementById("ongoingTable");
+                table.rows[k].cells[0].innerHTML = '';
+                table.rows[k].cells[1].innerHTML = 'No Event Available';
+                table.rows[k].cells[2].innerHTML = '';
+                table.rows[k].cells[3].innerHTML = '';
+                table.rows[k].cells[4].innerHTML = '';
             }
         });
-        request.done(function(msg) {
-            //console.log(msg.email);
-            sessionId = msg.email;
-            setOngoing(msg.email);
-        });
-
-        request.fail(function(jqXHR, textStatus) {
-            window.location = "index.html"
-        });
-    }
-    window.onpaint = regEvent();
+}
 </script>
 
 <script>
@@ -268,30 +316,6 @@ var location= ip.split(':')[0];
         }
     }
 </script>
-<script>
-    function getEventData(eventName) {
-        var ip= window.location.href.split('/')[2];
-var location= ip.split(':')[0];
-
-        var link = "http://" + location + ":3000/events/";
-        link = link.concat(eventName);
-        //console.log(link);
-        var request = $.ajax({
-            url: link,
-            type: "GET",
-            xhrFields: {
-                withCredentials: true
-            }
-        });
-        request.done(function(msg) {
-            addRow('eventTable', msg);
-        });
-
-        request.fail(function(jqXHR, textStatus) {
-            window.location = "index.html";
-        });
-    }
-</script>
 <script language="javascript">
     var m = 1;
 
@@ -307,30 +331,6 @@ var location= ip.split(':')[0];
             }
         }
         setOngoingDataval(tableID, eventDetails, row, m++);
-    }
-</script>
-<script>
-    function getEventData(eventName) {
-        var ip= window.location.href.split('/')[2];
-var location= ip.split(':')[0];
-
-        var link = "http://" + location + ":3000/events/";
-        link = link.concat(eventName);
-        //console.log(link);
-        var request = $.ajax({
-            url: link,
-            type: "GET",
-            xhrFields: {
-                withCredentials: true
-            }
-        });
-        request.done(function(msg) {
-            addRow('eventTable', msg);
-        });
-
-        request.fail(function(jqXHR, textStatus) {
-            window.location = "index.html";
-        });
     }
 </script>
 <script>
@@ -512,16 +512,16 @@ var location= ip.split(':')[0];
                     <table class="table table-striped table-hover " id="userDataTable">
                         <tr>
                             <th>Name</th>
-                            <td id="userName">Dakshal</td>
+                            <td id="userName"></td>
                         </tr>
 
                         <tr>
                             <th>Email id</th>
-                            <td id="userEmail">Dakshal</td>
+                            <td id="userEmail"></td>
                         </tr>
                         <tr>
                             <th>Signed up as</th>
-                            <td id="userSignInAs">Dakshal</td>
+                            <td id="userSignInAs"></td>
                         </tr>
 
                     </table>
@@ -544,7 +544,7 @@ var location= ip.split(':')[0];
               </tr>
  -->
                             <tr>
-                                <td class="col-lg-4">No Event Available</td>
+                                <td class="col-lg-4"></td>
                                 <td class="col-lg-4"></td>
                                 <td class="col-lg-4"></td>
                                 <td align="center" class="col-lg-4">
@@ -580,12 +580,12 @@ var location= ip.split(':')[0];
 
                                 </tr>
                                 <tr>
-                                    <td>1</td>
-                                    <td>No Interview Available For You</td>
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td>
-                                        <button class="btn btn-success btn-lg" onclick="joinAnEvent(this)" value="Join">Join</button>
+                                        <button class="btn btn-success btn-lg" id="joinAnEvent" onclick="joinAnEvent(this)" value="Join">Join</button>
                                     </td>
                                 </tr>
                             </tbody>

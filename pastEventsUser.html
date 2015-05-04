@@ -40,6 +40,8 @@ var location= ip.split(':')[0];
         var eventNames;
         var eventLength;
         var currentTime = '';
+        var count=0;
+        var curr=0;
         var outMsg;
 
         function get_event(email) {
@@ -79,13 +81,42 @@ var location= ip.split(':')[0];
                         console.log(currentTime);
                         getEventData(msg[i].time, currentTime, eventNames[i]);
                     }
+                    if(!eventNames.length){
+var table = document.getElementById("eventTable");
+                        table.rows[1].cells[0].innerHTML = '';
+                        table.rows[1].cells[1].innerHTML = 'No Event Available';
+                        table.rows[1].cells[2].innerHTML = '';
+                        table.rows[1].cells[3].innerHTML = '';
+                        table.rows[1].cells[4].innerHTML = '';
+                    }
+                    count = eventNames.length;
                 });
 
                 request.fail(function(jqXHR, textStatus) {
-                    alert(" ");
-                    // window.location = "interview_platform.html";
+                    alert("Un able to get event Data");
                 });
             }
+            function getEventData(eventTime, currentTime, data) {
+                console.log(currentTime);
+                if (new Date(eventTime).getTime() < currentTime) {
+                    addRow('eventTable', data);
+                }
+                else {
+                        curr++;
+                }
+                console.log(curr, count);
+                if(curr==count){
+                    if(curr == eventNames.length){
+                        var table = document.getElementById("eventTable");
+                        table.rows[1].cells[0].innerHTML = '';
+                        table.rows[1].cells[1].innerHTML = 'No Event Available';
+                        table.rows[1].cells[2].innerHTML = '';
+                        table.rows[1].cells[3].innerHTML = '';
+                        table.rows[1].cells[4].innerHTML = '';
+                    }
+                }
+            }
+
             // window.onpaint = get_event();
         var rowId;
 
@@ -97,7 +128,7 @@ var location= ip.split(':')[0];
             createTable();
             if (result == null) {
                 var table = document.getElementById('resultTable');
-                table.rows[1].cells[0].innerHTML = 1;
+                table.rows[1].cells[0].innerHTML = '';
                 table.rows[1].cells[1].innerHTML = 'No result to display';
                 table.rows[1].cells[2].innerHTML = '';
             } else {
@@ -174,26 +205,6 @@ var location= ip.split(':')[0];
                 }
             }
             m = 1;
-        }
-    </script>
-
-
-    <script>
-        function getEventData(eventTime, currentTime, data) {
-            console.log(currentTime);
-            if (new Date(eventTime).getTime() < currentTime) {
-                addRow('eventTable', data);
-            }
-        }
-
-        function editEvent(r) {
-            var table = document.getElementById("eventTable");
-            var i = r.parentNode.parentNode.rowIndex;
-            console.log(i);
-            var data = table.rows[i].cells[1].innerHTML;
-            // console.log(data);
-
-            window.location = "editEvents.html" + data;
         }
     </script>
     <script>
@@ -281,8 +292,8 @@ var location= ip.split(':')[0];
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="col-lg-1">1</td>
-                                <td class="col-lg-1">No Data Available</td>
+                                <td class="col-lg-1"></td>
+                                <td class="col-lg-1"></td>
                                 <td class="col-lg-3"></td>
                                 <td class="col-lg-1"></td>
                                 <td class="col-lg-1">
@@ -317,7 +328,7 @@ var location= ip.split(':')[0];
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="col-lg-1">1</td>
+                                    <td class="col-lg-1"></td>
                                     <td class="col-lg-1">No result to display</td>
                                     <td class="col-lg-1"></td>
 

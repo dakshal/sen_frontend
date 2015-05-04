@@ -10,7 +10,7 @@
       <script>
           function signUp(){
                 var ip= window.location.href.split('/')[2];
-var location= ip.split(':')[0];
+        var location= ip.split(':')[0];
 
             var request = $.ajax({
                           url: "http://"+location+":3000/users",
@@ -18,7 +18,6 @@ var location= ip.split(':')[0];
                           data: {
                               name: $("#inputName").val(),
                               email: $("#inputEmail").val(),
-                              password: $("#inputPassword").val(),
                               role: "Interviewer",
                               noOfInterviews: $("#interview").val(),
                               degree: $("#degree").val(),
@@ -46,15 +45,15 @@ var location= ip.split(':')[0];
         <div class="panel-heading" >
           <div class="panel-title text-center"><h3>Sign Up</h3></div>
         </div>
-        <div class="panel-body" style="background:#E8EFF7;">
-          <form class="form-horizontal" style="margin: 0 auto; width:100%;">
+          <form class="form-horizontal" id="signUpForm" action="javascript:signUp();">
             <fieldset>
+        <div class="panel-body" style="background:#E8EFF7;">
               <legend style="width: 100%; text-align: center;">Basic Information</legend>
               
               <div class="form-group">
                 <label for="inputName" class="col-lg-3 control-label">Full Name</label>                
                 <div class="col-lg-8">
-                  <input class="form-control" id="inputName" placeholder="Full Name" type="text">
+                  <input class="form-control" id="inputName" placeholder="Full Name" type="text" required>
                 </div>
               </div>
               
@@ -62,7 +61,7 @@ var location= ip.split(':')[0];
                 <label for="inputEmail" class="col-lg-3 control-label">Email</label>
 
                 <div class="col-lg-8">
-                  <input class="form-control" id="inputEmail" placeholder="Email" type="text">
+                  <input class="form-control" id="inputEmail" placeholder="Email" type="email" required>
                   <span class="help-block">We'll send you an email along with a password. Please sign in with the given password and change it later.</span>
                 </div>
               </div>
@@ -73,7 +72,7 @@ var location= ip.split(':')[0];
                 <div class="form-group">
                 <label for="interviews" class="col-lg-5 control-label">Number of Interviews Conducted</label>
                 <div class="col-lg-2">
-                  <input class="form-control" id="interview">                
+                  <input class="form-control" id="interview" required>                
                 </div>
               </div>
               <div>
@@ -87,7 +86,7 @@ var location= ip.split(':')[0];
               <div class="form-group">
                 <label for="select" class="col-lg-6 control-label">Area of Expertise in Conducting Interview</label>
                 <div class="col-lg-4">
-                  <select class="form-control" id="select">
+                  <select class="form-control" id="select" required >
                     <option>Front-End Developer</option>
                     <option>Back-End Developer</option>
                     <option>Data Analyst</option>
@@ -99,15 +98,16 @@ var location= ip.split(':')[0];
               </div>
               <div class="form-group">
                 <div class="col-lg-10 col-lg-offset-3">
-                  <button type="reset" class="btn btn-default">Cancel</button>
-                  <button type="button" onClick="signUp()" class="btn btn-primary">Submit</button>
+                  <button type="reset" class="btn btn-default">Reset</button>
+                  <button type="submit" form="signUpForm" value="Submit" class="btn btn-primary" id="inputSubmit">Submit</button>
                 </div>
               </div>
-            </fieldset>
-        </form>
         </div>
       </div>
-
+      </div>
+      </fieldset>
+      </form>
+      </div>
         
     </body>
 </html>

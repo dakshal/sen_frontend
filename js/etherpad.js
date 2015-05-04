@@ -1,7 +1,9 @@
 (function( $ ){
 
   $.fn.pad = function( options ) {
-    var localIp = window.location.href.split('/')[2];
+	var ip= window.location.href.split('/')[2];
+	var localIp= ip.split(':')[0];
+
     var settings = {
       'host'              : 'http://'+localIp+':9001',
       'baseUrl'           : '/p/',
